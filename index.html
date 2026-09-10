@@ -202,6 +202,20 @@
     color: var(--ink);
   }
   form.add-row input[type="text"] { flex: 1; min-width: 0; }
+  /* Name-Eingabe + Kategorie-Auswahl: Kategorienamen sind teils lang
+     ("Trockenwaren & Konserven") und das Dropdown nimmt sich so viel Breite,
+     wie der Text braucht — auf schmalen Handys (z. B. iPhone 16e, ~390px
+     Breite) blieb für die Texteingabe kaum noch Platz. Auf breiteren Geräten
+     (Galaxy S26 Ultra) reichte die Breite dagegen aus. Statt einer festen
+     Breitengrenze, die von Gerät zu Gerät unterschiedlich passt: Name-Feld
+     bekommt immer eine eigene volle Zeile, Kategorie + Button teilen sich die
+     Zeile darunter — funktioniert unabhängig von Bildschirmbreite und
+     Kategorie-Textlänge.
+  */
+  #addListeForm, #addVorratForm { flex-wrap: wrap; }
+  #addListeForm input[type="text"], #addVorratForm input[type="text"] { flex: 1 1 100%; }
+  #addListeForm select, #addVorratForm select { flex: 1; min-width: 0; }
+  #addListeForm button.primary, #addVorratForm button.primary { flex: 0 0 auto; }
   button.primary {
     border: none;
     background: var(--accent);
@@ -405,7 +419,7 @@
   //
   // WICHTIG hier eintragen: die eigene /exec-URL aus Apps Script
   // (Bereitstellen → Bereitstellungen verwalten). Ohne das funktioniert nichts.
-  var API_URL = 'https://script.google.com/macros/s/AKfycby3ba9b2QvD9yMePeHNU8llcKtzZqTqtU3cAWBmA101ugRXFlRtUHUAfIlGJy8BaQrc/exec';
+  var API_URL = 'HIER_DEINE_EXEC_URL_EINTRAGEN';
 
   // Jeder Aufruf bekommt eine fortlaufende Nummer. Der Server garantiert nicht,
   // dass Antworten in der Reihenfolge der Aufrufe ankommen — z. B. kann das
