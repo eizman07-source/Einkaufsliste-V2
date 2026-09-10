@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Einkaufsliste</title>
+<meta name="theme-color" content="#3f7d58">
+<link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&amp;id=1inyRz5aaKdfc4dAQVHqHUblDf53v9_xQ">
+<link rel="apple-touch-icon" href="https://drive.google.com/uc?export=view&amp;id=1inyRz5aaKdfc4dAQVHqHUblDf53v9_xQ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f6;
+    --surface: #ffffff;
+    --ink: #2b2a28;
+    --muted: #736e63;
+    --line: #e6e2d8;
+    --accent: #3f7d58;
+    --accent-ink: #ffffff;
+    --accent-soft: #e7f1ea;
+    --danger: #a44236;
+    --danger-soft: #f6e9e6;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(30, 26, 14, 0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1917;
+      --surface: #232120;
+      --ink: #eeece5;
+      --muted: #a49d8e;
+      --line: #38352e;
+      --accent: #74c393;
+      --accent-ink: #16261c;
+      --accent-soft: #24352a;
+      --danger: #e0897a;
+      --danger-soft: #3a2622;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Work Sans", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding-bottom: 48px; }
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; text-wrap: balance; margin: 0; }
+  .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  header.top {
+    padding: 22px 20px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; max-width: 760px; margin: 0 auto; }
+  header.top h1 { font-size: 1.5rem; }
+  .subtitle { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+
+  .store-switch {
+    display: flex;
+    gap: 6px;
+    max-width: 760px;
+    margin: 14px auto 0;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .store-switch button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .store-switch button.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+    max-width: 760px;
+    margin: 14px auto 0;
+    border-bottom: 1px solid var(--line);
+  }
+  nav.tabs button {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  nav.tabs button.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+  main { max-width: 760px; margin: 0 auto; padding: 20px; }
+  .panel { display: none; flex-direction: column; gap: 18px; }
+  .panel.active { display: flex; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .card-head h3 { font-size: 1rem; }
+  .count-pill {
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 1px 9px;
+  }
+
+  ul.item-list { list-style: none; margin: 0; padding: 0; }
+  ul.item-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  ul.item-list li:last-child { border-bottom: none; }
+  ul.item-list li.checked span.name { color: var(--muted); text-decoration: line-through; }
+
+  .checkbox {
+    width: 21px; height: 21px;
+    border-radius: 6px;
+    border: 1.5px solid var(--line);
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+  }
+  .checkbox.checked { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-size: 13px; }
+  .item-name { flex: 1; font-size: 0.94rem; cursor: pointer; }
+  .note-tag {
+    display: inline-block; margin-left: 8px; font-size: 0.78rem; color: var(--muted);
+    background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px;
+  }
+  .note-input {
+    width: 100%; font-family: inherit; font-size: 16px; color: var(--ink);
+    border: 1px solid var(--accent); border-radius: 6px; padding: 4px 8px; background: var(--surface);
+  }
+  /* Artikel, der noch gespeichert wird: schon sichtbar, aber noch nicht antippbar */
+  ul.item-list li.pending, .chip.pending { opacity: 0.55; }
+  ul.item-list li.pending .checkbox, .chip.pending { cursor: default; }
+  /* Kopfzeile der Vorschläge mit "Doppelte suchen" */
+  .vorrat-kopf { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  ul.dupe-list { list-style: none; margin: 0; padding: 0; }
+  ul.dupe-list li { padding: 8px 16px; border-bottom: 1px solid var(--line); }
+  ul.dupe-list li:last-child { border-bottom: none; }
+  .dupe-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; font-size: 0.9rem; padding: 3px 0;
+  }
+  .dupe-cat { color: var(--muted); font-size: 0.78rem; }
+  .row-btn {
+    border: none; background: none; color: var(--muted); cursor: pointer; font-size: 0.8rem;
+    padding: 4px 6px;
+  }
+  .row-btn:hover { color: var(--danger); }
+
+  form.add-row {
+    display: flex; gap: 8px; padding: 12px 16px;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  input[type="text"], input[type="number"], input[type="date"], select {
+    font-family: inherit;
+    font-size: 16px; /* mind. 16px, sonst zoomt iOS beim Antippen automatisch rein */
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 8px 10px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  form.add-row input[type="text"] { flex: 1; min-width: 0; }
+  button.primary {
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.88rem;
+    padding: 8px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  button.primary:disabled { opacity: 0.5; cursor: default; }
+  button:focus-visible, input:focus-visible, select:focus-visible, .checkbox:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+
+  .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
+  .chip {
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    border-radius: 999px;
+    padding: 6px 6px 6px 13px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .chip.on-list { border-color: var(--accent); background: var(--accent-soft); }
+  .chip .x { color: var(--muted); background: none; border: none; font-size: 0.75rem; padding: 3px 6px; cursor: pointer; border-radius: 999px; }
+  .chip .x:hover { color: var(--danger); background: var(--danger-soft); }
+  .empty-note { color: var(--muted); font-size: 0.85rem; padding: 16px; }
+
+  table.eval-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  table.eval-table th, table.eval-table td { text-align: left; padding: 9px 16px; border-bottom: 1px solid var(--line); }
+  table.eval-table th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  table.eval-table td.price { text-align: right; }
+  .table-scroll { overflow-x: auto; }
+  .trend { font-size: 0.75rem; padding: 1px 7px; border-radius: 999px; margin-left: 6px; }
+  .trend.up { background: var(--danger-soft); color: var(--danger); }
+  .trend.down { background: var(--accent-soft); color: var(--accent); }
+
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .settings-grid { grid-template-columns: 1fr; } }
+  .order-list { list-style: none; margin: 0; padding: 8px 0; }
+  .order-list li {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .order-list li:last-child { border-bottom: none; }
+  .order-list li.dragging {
+    opacity: 0.65; background: var(--accent-soft); position: relative; z-index: 5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .drag-handle {
+    cursor: grab; color: var(--muted); font-size: 1.05rem; line-height: 1;
+    padding: 2px 4px; touch-action: none; user-select: none; flex-shrink: 0;
+  }
+  .drag-handle:active { cursor: grabbing; }
+  .sortable-label { flex: 1; }
+  .order-buttons { display: flex; gap: 6px; flex-shrink: 0; }
+  .order-buttons button {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;
+  }
+  .order-buttons button:hover { border-color: var(--accent); color: var(--accent); }
+  .clear-bought-btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 0.78rem;
+  }
+  .clear-bought-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .store-name-input { width: 100%; padding: 10px 16px; }
+  .save-row { padding: 12px 16px; border-top: 1px solid var(--line); background: var(--bg); }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--bg); font-size: 0.85rem;
+    padding: 9px 16px; border-radius: 999px; opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="title-row">
+    <div>
+      <h1>Einkaufsliste</h1>
+      <div class="subtitle" id="subtitle">wird geladen …</div>
+    </div>
+  </div>
+  <div class="store-switch" id="storeSwitch"></div>
+  <nav class="tabs">
+    <button data-tab="liste" class="active">Liste</button>
+    <button data-tab="vorrat">Vorschläge</button>
+    <button data-tab="auswertung">Auswertung</button>
+    <button data-tab="einstellungen">Einstellungen</button>
+  </nav>
+</header>
+
+<main>
+
+  <section class="panel active" id="panel-liste">
+    <div id="listeGroups"></div>
+    <div class="card">
+      <form class="add-row" id="addListeForm">
+        <input type="text" id="addListeName" placeholder="Artikel hinzufügen …" required>
+        <select id="addListeCategory"></select>
+        <button class="primary" type="submit">+</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-vorrat">
+    <div class="vorrat-kopf">
+      <p class="subtitle" style="margin:0;">Eure Vorschläge für regelmäßig gekaufte Lebensmittel. Antippen legt den Artikel auf die aktuelle Liste.</p>
+      <button class="clear-bought-btn" id="findDupes">Doppelte suchen</button>
+    </div>
+    <div id="dupResults"></div>
+    <div id="vorratGroups"></div>
+    <div class="card">
+      <form class="add-row" id="addVorratForm">
+        <input type="text" id="addVorratName" placeholder="Neuen Artikel zu Vorschlägen hinzufügen …" required>
+        <select id="addVorratCategory"></select>
+        <button class="primary" type="submit">+</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-auswertung">
+    <div class="card">
+      <div class="card-head"><h3>Einkauf erfassen</h3></div>
+      <form class="add-row" id="addPurchaseForm" style="flex-wrap: wrap;">
+        <input type="text" id="pItem" placeholder="Artikel" required style="flex: 2; min-width: 140px;">
+        <input type="number" id="pPrice" placeholder="Preis €" step="0.01" min="0" required style="width: 100px;">
+        <input type="date" id="pDate" required>
+        <input type="text" id="pStore" placeholder="Laden" style="width: 120px;">
+        <button class="primary" type="submit">Speichern</button>
+      </form>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Preisverlauf</h3><span class="count-pill" id="purchaseCount">0 Einträge</span></div>
+      <div class="table-scroll">
+        <table class="eval-table" id="evalTable">
+          <thead><tr><th>Datum</th><th>Artikel</th><th>Laden</th><th style="text-align:right;">Preis</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="empty-note" id="evalEmpty" style="display:none;">
+        Noch keine Käufe erfasst. Trag oben einen Kauf ein oder schick Richard einen Kassenzettel im Claude-Chat — die Preise landen dann automatisch hier.
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-einstellungen">
+    <div class="card">
+      <div class="card-head"><h3>Kategorien</h3></div>
+      <p class="empty-note" style="padding-top:0;">
+        Per <strong>⠿</strong> ziehen und verschieben, um die Reihenfolge zu ändern — wird sofort gespeichert. Reihenfolge hier = "Standard"-Laden. Umbenennen ändert die Kategorie überall (auch bei bestehenden Artikeln), Löschen verschiebt betroffene Artikel nach „Sonstiges".
+      </p>
+      <ul class="order-list" id="categoryList"></ul>
+      <form class="add-row" id="addCategoryForm">
+        <input type="text" id="newCategoryName" placeholder="Neue Kategorie …" required>
+        <button class="primary" type="submit">+</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Läden & Reihenfolge</h3></div>
+      <p class="empty-note" style="padding-top:0;">
+        Lege die Namen eurer beiden Stammläden fest und ordne die Kategorien per Ziehen (⠿) in der Reihenfolge, wie ihr sie beim Einkaufen durchlauft — die Reihenfolge wird sofort gespeichert.
+        "Standard" ist ein dritter, unabhängiger Laden mit fester, normierter Reihenfolge und lässt sich nicht ändern.
+      </p>
+      <div class="settings-grid">
+        <div>
+          <input type="text" class="store-name-input" id="s1Name" placeholder="Name Laden 1">
+          <ul class="order-list" id="s1Order"></ul>
+        </div>
+        <div>
+          <input type="text" class="store-name-input" id="s2Name" placeholder="Name Laden 2">
+          <ul class="order-list" id="s2Order"></ul>
+        </div>
+      </div>
+      <div class="save-row">
+        <button class="primary" id="saveConfig">Namen speichern</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ---- Backend-Aufruf per fetch() als Promise ----
+  // Diese Datei läuft NICHT auf script.google.com, sondern extern (z. B.
+  // GitHub Pages) — deshalb kein google.script.run, sondern ein ganz normaler
+  // fetch() auf die Apps-Script-/exec-URL, die dort weiterhin als Backend
+  // läuft (siehe Code.gs: doPost mit generischer {rpc, args}-Schnittstelle).
+  //
+  // WICHTIG hier eintragen: die eigene /exec-URL aus Apps Script
+  // (Bereitstellen → Bereitstellungen verwalten). Ohne das funktioniert nichts.
+  var API_URL = 'https://script.google.com/macros/s/AKfycby3ba9b2QvD9yMePeHNU8llcKtzZqTqtU3cAWBmA101ugRXFlRtUHUAfIlGJy8BaQrc/exec';
+
+  // Jeder Aufruf bekommt eine fortlaufende Nummer. Der Server garantiert nicht,
+  // dass Antworten in der Reihenfolge der Aufrufe ankommen — z. B. kann das
+  // alle 20s laufende Auto-Refresh (das VOR einem Abhaken losgeschickt wurde)
+  // NACH der Antwort des Abhakens zurückkommen und dann fälschlich den alten,
+  // noch nicht abgehakten Zustand wiederherstellen ("springt zurück").
+  // Deshalb merkt sich setState() die höchste bereits angewendete Nummer und
+  // ignoriert Antworten, die älter sind als der zuletzt übernommene Stand.
+  var callSeq = 0;
+  var pendingMutations = 0;   // laufende bzw. wartende schreibende Aufrufe
+  var lastLocalAction = Date.now();
+
+  function rawCall(fn, args) {
+    var seq = ++callSeq;
+    return fetch(API_URL, {
+      method: 'POST',
+      // Bewusst KEIN Content-Type-Header (Standard bleibt text/plain) — mit
+      // application/json würde der Browser eine CORS-Preflight-Anfrage
+      // (OPTIONS) schicken, die Apps Script nicht beantwortet, und der Aufruf
+      // schlägt fehl. Apps Script liest den Body trotzdem als JSON.
+      body: JSON.stringify({ rpc: fn, args: args })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function (data) {
+      if (!data.ok) throw new Error(data.error || 'Serverfehler');
+      var result = data.state;
+      if (result && typeof result === 'object') result.__seq = seq;
+      return result;
+    });
+  }
+
+  // Schreibende Aufrufe laufen strikt nacheinander. google.script.run
+  // garantiert keine Reihenfolge: hakt man einen Artikel ab und drückt sofort
+  // "Liste bereinigen", konnte die Bereinigung VOR dem Abhaken beim Server
+  // ankommen — der Artikel verschwand kurz und war gleich darauf wieder da.
+  // Mit dieser Warteschlange sieht der Server die Änderungen in genau der
+  // Reihenfolge, in der geklickt wurde. Lesende Aufrufe (getState) laufen
+  // weiterhin sofort und werden nicht eingereiht.
+  var mutationQueue = Promise.resolve();
+
+  function call(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (fn === 'getState') return rawCall(fn, args);
+
+    pendingMutations++;
+    lastLocalAction = Date.now();
+    // Nach einer Pause sofort wieder auf den schnellen Takt umstellen — sonst
+    // liefe der lange Leerlauf-Timer weiter, obwohl gerade jemand aktiv ist.
+    scheduleRefresh();
+
+    var settled = false;
+    var done = function () {
+      if (settled) return;
+      settled = true;
+      pendingMutations = Math.max(0, pendingMutations - 1);
+    };
+
+    var result = mutationQueue.then(function () {
+      return rawCall(fn, args);
+    });
+    result.then(done, done);
+    // Kette weiterlaufen lassen, auch wenn ein Aufruf scheitert oder hängt:
+    // sonst blockiert ein einziger Fehler alle folgenden Änderungen.
+    mutationQueue = new Promise(function (weiter) {
+      var fertig = false;
+      var einmal = function () { if (!fertig) { fertig = true; weiter(); } };
+      result.then(einmal, einmal);
+      setTimeout(function () { done(); einmal(); }, 20000);
+    });
+    return result;
+  }
+
+  var state = { items: [], purchases: [], config: null };
+  var currentStore = 1; // 1, 2 oder 3 ("Standard")
+
+  var toastTimer = null;
+  function toast(msg, dauer) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, dauer || 1800);
+  }
+
+  // ---- Namensvergleich (für doppelte und ähnliche Einträge) ----
+  // normName: Groß-/Kleinschreibung, Umlaute und Satzzeichen egal.
+  // stammName: zusätzlich grobe deutsche Endungen ab, damit „Heidelbeere"
+  // und „Heidelbeeren" denselben Stamm ergeben.
+  function normName(name) {
+    return String(name || '')
+      .toLowerCase()
+      .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+  function stammName(name) {
+    var w = normName(name).replace(/ /g, '');
+    var endungen = ['innen', 'chen', 'lein', 'ern', 'en', 'er', 'es', 'se', 'n', 'e', 's'];
+    for (var i = 0; i < endungen.length; i++) {
+      var e = endungen[i];
+      if (w.length - e.length >= 4 && w.slice(-e.length) === e) return w.slice(0, -e.length);
+    }
+    return w;
+  }
+  // Levenshtein-Abstand, gedeckelt: fängt Tippfehler wie „Jogurt"/„Joghurt".
+  function editAbstand(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 99;
+    var prev = [], cur = [], i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      cur[0] = i;
+      for (j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1,
+                          prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+      }
+      for (j = 0; j <= b.length; j++) prev[j] = cur[j];
+    }
+    return prev[b.length];
+  }
+  function findeGleichnamigen(name) {
+    var n = normName(name);
+    var treffer = state.items.filter(function (i) { return !i.pending && normName(i.name) === n; });
+    return treffer[0] || null;
+  }
+  function findeAehnlichen(name) {
+    var s = stammName(name);
+    if (s.length < 4) return null;
+    var treffer = state.items.filter(function (i) {
+      if (i.pending) return false;
+      var t = stammName(i.name);
+      return t.length >= 4 && (t === s || editAbstand(t, s) <= 1);
+    });
+    return treffer[0] || null;
+  }
+
+  function storeOrder() {
+    if (currentStore === 1) return state.config.store1Order;
+    if (currentStore === 2) return state.config.store2Order;
+    return state.config.store3Order;
+  }
+
+  function storeLabel(n) {
+    if (n === 1) return state.config.store1Name;
+    if (n === 2) return state.config.store2Name;
+    return state.config.store3Name;
+  }
+
+  function renderStoreSwitch() {
+    var el = document.getElementById('storeSwitch');
+    el.innerHTML = '';
+    [1, 2, 3].forEach(function (n) {
+      var b = document.createElement('button');
+      b.textContent = storeLabel(n);
+      if (n === currentStore) b.classList.add('active');
+      b.onclick = function () { currentStore = n; render(); };
+      el.appendChild(b);
+    });
+  }
+
+  function fillCategorySelect(sel) {
+    sel.innerHTML = '';
+    state.config.categories.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      sel.appendChild(o);
+    });
+  }
+
+  function groupByCategory(items, order) {
+    var map = {};
+    order.forEach(function (c) { map[c] = []; });
+    items.forEach(function (it) {
+      if (!map[it.category]) map[it.category] = [];
+      map[it.category].push(it);
+    });
+    return order.filter(function (c) { return map[c] && map[c].length; }).map(function (c) {
+      return { category: c, items: map[c] };
+    });
+  }
+
+  function buildItemRow(it, opts) {
+    // opts.bought = true  -> Darstellung im "Gekauft"-Bereich (durchgestrichen)
+    var li = document.createElement('li');
+    if (opts.bought) li.classList.add('checked');
+    // Noch nicht bestätigt gespeicherter Artikel: sichtbar, aber noch nicht
+    // anklickbar — sonst ginge ein Klick auf eine ID ins Leere, die es
+    // serverseitig noch gar nicht gibt.
+    var pending = !!it.pending;
+    if (pending) li.classList.add('pending');
+    var box = document.createElement('div');
+    box.className = 'checkbox' + (opts.bought ? ' checked' : '');
+    box.setAttribute('role', 'checkbox');
+    box.setAttribute('aria-checked', opts.bought ? 'true' : 'false');
+    box.tabIndex = 0;
+    if (opts.bought) box.textContent = '✓';
+    if (!pending) box.onclick = function () { toggleChecked(it.id, !opts.bought); };
+
+    var nameWrap = document.createElement('span');
+    nameWrap.className = 'item-name';
+    if (opts.bought) {
+      // Im "Gekauft"-Bereich reaktiviert ein Antippen des Namens den Artikel
+      // wieder, statt eine Notiz abzufragen.
+      nameWrap.title = 'Antippen, um wieder auf die Liste zu holen';
+      var nameText = document.createElement('span');
+      nameText.className = 'name';
+      nameText.textContent = it.name;
+      nameWrap.appendChild(nameText);
+      if (it.note) {
+        var noteTag = document.createElement('span');
+        noteTag.className = 'note-tag';
+        noteTag.textContent = it.note;
+        nameWrap.appendChild(noteTag);
+      }
+      if (!pending) nameWrap.onclick = function () { toggleChecked(it.id, false); };
+    } else {
+      nameWrap.title = 'Antippen für eine Notiz (z. B. Menge)';
+      // Bewusst ein Inline-Eingabefeld statt window.prompt(): Browser-Dialoge
+      // wie prompt() werden in manchen eingebetteten Ansichten (z. B. der
+      // Design-Vorschau) unterdrückt und würden dort einfach nichts tun.
+      function renderNameWrap() {
+        nameWrap.innerHTML = '';
+        var nameText = document.createElement('span');
+        nameText.className = 'name';
+        nameText.textContent = it.name;
+        nameWrap.appendChild(nameText);
+        if (it.note) {
+          var noteTag = document.createElement('span');
+          noteTag.className = 'note-tag';
+          noteTag.textContent = it.note;
+          nameWrap.appendChild(noteTag);
+        }
+      }
+      function startEditNote() {
+        // Solange editiert wird, verwirft renderListe() eingehende Neuzeichnungen
+        // (Auto-Refresh, optimistische Updates anderer Zeilen) — sonst würde ein
+        // Rebuild der Liste mitten im Tippen das Eingabefeld wieder schließen.
+        editingNoteId = it.id;
+        nameWrap.innerHTML = '';
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'note-input';
+        input.placeholder = 'Notiz, z. B. 2x, 500g …';
+        input.value = it.note || '';
+        input.onclick = function (e) { e.stopPropagation(); };
+        var cancelled = false;
+        input.onkeydown = function (e) {
+          if (e.key === 'Enter') { input.blur(); }
+          else if (e.key === 'Escape') { cancelled = true; input.blur(); }
+        };
+        input.onblur = function () {
+          if (!cancelled) {
+            var val = input.value.trim();
+            if (val !== (it.note || '')) {
+              it.note = val;
+              var stamp = markOptimistic(it.id, { note: val });
+              call('setItemNote', it.id, val).then(function (s) {
+                clearOptimistic(it.id, stamp); setState(s);
+              }).catch(function (err) {
+                clearOptimistic(it.id, stamp);
+                console.error('setItemNote fehlgeschlagen:', err);
+              });
+            }
+          }
+          editingNoteId = null;
+          if (listeRenderPending) { listeRenderPending = false; renderListe(); renderVorrat(); }
+          else renderNameWrap();
+        };
+        nameWrap.appendChild(input);
+        input.focus();
+        input.select();
+      }
+      renderNameWrap();
+      if (!pending) {
+        nameWrap.onclick = function (e) {
+          if (e.target.tagName === 'INPUT') return;
+          startEditNote();
+        };
+      }
+    }
+
+    li.appendChild(box);
+    li.appendChild(nameWrap);
+    return li;
+  }
+
+  var editingNoteId = null;
+  var listeRenderPending = false;
+
+  function renderListe() {
+    if (editingNoteId) {
+      // Nicht neu zeichnen, während eine Notiz gerade bearbeitet wird — würde
+      // das Eingabefeld mitten im Tippen schließen. Wird nachgeholt, sobald
+      // die Bearbeitung endet (siehe startEditNote/input.onblur).
+      listeRenderPending = true;
+      return;
+    }
+    var activeAll = state.items.filter(function (i) { return i.active; });
+    var toBuy = activeAll.filter(function (i) { return !i.checked; });
+    var bought = activeAll.filter(function (i) { return i.checked; });
+    var groups = groupByCategory(toBuy, storeOrder());
+    var host = document.getElementById('listeGroups');
+    host.innerHTML = '';
+    if (!groups.length && !bought.length) {
+      host.innerHTML = '<div class="card"><p class="empty-note">Liste ist leer — alles erledigt, oder Artikel aus den Vorschlägen antippen.</p></div>';
+    }
+    groups.forEach(function (g) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      var head = document.createElement('div');
+      head.className = 'card-head';
+      head.innerHTML = '<h3>' + g.category + '</h3><span class="count-pill">' + g.items.length + '</span>';
+      card.appendChild(head);
+      var ul = document.createElement('ul');
+      ul.className = 'item-list';
+      g.items.forEach(function (it) {
+        ul.appendChild(buildItemRow(it, { bought: false }));
+      });
+      card.appendChild(ul);
+      host.appendChild(card);
+    });
+
+    if (bought.length) {
+      var boughtCard = document.createElement('div');
+      boughtCard.className = 'card';
+      var boughtHead = document.createElement('div');
+      boughtHead.className = 'card-head';
+      boughtHead.innerHTML = '<h3>Gekauft</h3>';
+      var boughtActions = document.createElement('div');
+      boughtActions.style.display = 'flex';
+      boughtActions.style.alignItems = 'center';
+      boughtActions.style.gap = '10px';
+      boughtActions.innerHTML = '<span class="count-pill">' + bought.length + '</span>';
+      var clearBtn = document.createElement('button');
+      clearBtn.className = 'clear-bought-btn';
+      clearBtn.textContent = 'Liste bereinigen';
+      clearBtn.onclick = function () { clearBought(); };
+      boughtActions.appendChild(clearBtn);
+      boughtHead.appendChild(boughtActions);
+      boughtCard.appendChild(boughtHead);
+      var boughtUl = document.createElement('ul');
+      boughtUl.className = 'item-list';
+      bought.forEach(function (it) {
+        boughtUl.appendChild(buildItemRow(it, { bought: true }));
+      });
+      boughtCard.appendChild(boughtUl);
+      host.appendChild(boughtCard);
+    }
+
+    document.getElementById('subtitle').textContent =
+      toBuy.length + (toBuy.length === 1 ? ' Artikel' : ' Artikel') + ' offen · sortiert für ' + storeLabel(currentStore);
+  }
+
+  function toggleChecked(id, checked) {
+    var it = state.items.find(function (i) { return i.id === id; });
+    if (it) { it.checked = checked; renderListe(); renderVorrat(); } // optimistisch
+    var stamp = markOptimistic(id, { checked: checked });
+    call('setItemChecked', id, checked).then(function (s) {
+      clearOptimistic(id, stamp); setState(s);
+    }).catch(function (err) {
+      clearOptimistic(id, stamp);
+      console.error('setItemChecked fehlgeschlagen:', err);
+    });
+  }
+
+  function clearBought() {
+    var betroffen = state.items.filter(function (it) { return it.active && it.checked; });
+    if (!betroffen.length) return;
+    // IDs mitschicken: der Server soll genau die Artikel abräumen, die hier
+    // als gekauft angezeigt werden — unabhängig davon, ob das Abhaken des
+    // letzten Artikels im Sheet schon angekommen ist.
+    var ids = betroffen.map(function (it) { return it.id; });
+    var stamps = betroffen.map(function (it) {
+      it.active = false; it.checked = false; it.note = '';   // optimistisch
+      return { id: it.id, stamp: markOptimistic(it.id, { active: false, checked: false, note: '' }) };
+    });
+    renderListe(); renderVorrat();
+    var aufräumen = function () {
+      stamps.forEach(function (e) { clearOptimistic(e.id, e.stamp); });
+    };
+    call('clearBoughtItems', ids).then(function (s) {
+      aufräumen(); setState(s);
+    }).catch(function (err) {
+      aufräumen();
+      console.error('clearBoughtItems fehlgeschlagen:', err);
+    });
+  }
+
+  function renderVorrat() {
+    var groups = groupByCategory(state.items, state.config.categories);
+    var host = document.getElementById('vorratGroups');
+    host.innerHTML = '';
+    if (!groups.length) {
+      host.innerHTML = '<div class="card"><p class="empty-note">Noch keine Vorschläge. Leg unten den ersten an.</p></div>';
+    }
+    groups.forEach(function (g) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      var head = document.createElement('div');
+      head.className = 'card-head';
+      head.innerHTML = '<h3>' + g.category + '</h3><span class="count-pill">' + g.items.length + '</span>';
+      card.appendChild(head);
+      var wrap = document.createElement('div');
+      wrap.className = 'chip-wrap';
+      // Innerhalb der Kategorie alphabetisch, damit man beim Suchen nicht
+      // die ganze Kachel absuchen muss.
+      var sortiert = g.items.slice().sort(function (a, b) {
+        return String(a.name).localeCompare(String(b.name), 'de', { sensitivity: 'base' });
+      });
+      sortiert.forEach(function (it) {
+        var chip = document.createElement('div');
+        chip.className = 'chip' + (it.active ? ' on-list' : '') + (it.pending ? ' pending' : '');
+        var label = document.createElement('span');
+        label.textContent = it.name;
+        chip.appendChild(label);
+        if (!it.pending) {
+          chip.onclick = function (e) {
+            if (e.target.classList.contains('x')) return;
+            setItemAktiv(it, !it.active);
+          };
+          var x = document.createElement('button');
+          x.className = 'x'; x.textContent = '✕';
+          x.title = 'Aus Vorschlägen entfernen';
+          x.onclick = function () {
+            if (!confirm('„' + it.name + '" endgültig aus den Vorschlägen entfernen?')) return;
+            loescheArtikel(it);
+          };
+          chip.appendChild(x);
+        }
+        wrap.appendChild(chip);
+      });
+      card.appendChild(wrap);
+      host.appendChild(card);
+    });
+  }
+
+  // Artikel auf die Liste holen bzw. wieder herunternehmen (optimistisch).
+  function setItemAktiv(it, aktiv) {
+    it.active = aktiv;
+    // Der Server setzt beim Wechsel immer auch "gekauft" zurück und leert die
+    // Notiz — hier gleich mitziehen, damit der lokale Stand exakt dem
+    // entspricht, was zurückkommt.
+    it.checked = false;
+    if (!aktiv) it.note = '';
+    renderVorrat(); renderListe();
+    var patch = { active: aktiv, checked: false };
+    if (!aktiv) patch.note = '';
+    var stamp = markOptimistic(it.id, patch);
+    call('setItemActive', it.id, aktiv).then(function (s) {
+      clearOptimistic(it.id, stamp); setState(s);
+    }).catch(function (err) {
+      clearOptimistic(it.id, stamp);
+      console.error('setItemActive fehlgeschlagen:', err);
+    });
+  }
+
+  function loescheArtikel(it) {
+    deletedItemIds[it.id] = true;                 // sofort weg
+    state.items = state.items.filter(function (i) { return i.id !== it.id; });
+    renderVorrat(); renderListe(); renderDubletten();
+    call('deleteItem', it.id).then(function (s) {
+      delete deletedItemIds[it.id];
+      setState(s); toast('Entfernt');
+    }).catch(function (err) {
+      delete deletedItemIds[it.id];
+      alert('Konnte „' + it.name + '" nicht entfernen: ' + (err && err.message ? err.message : String(err)));
+    });
+  }
+
+  // ---- Ähnliche/doppelte Vorschläge aufspüren ----
+  var dupesAktiv = false;
+
+  function findeDubletten() {
+    var infos = state.items.filter(function (i) { return !i.pending; }).map(function (it) {
+      return { it: it, norm: normName(it.name), stem: stammName(it.name) };
+    });
+    var eltern = infos.map(function (_, i) { return i; });
+    function wurzel(i) { while (eltern[i] !== i) { eltern[i] = eltern[eltern[i]]; i = eltern[i]; } return i; }
+    function verbinde(a, b) { a = wurzel(a); b = wurzel(b); if (a !== b) eltern[b] = a; }
+    for (var i = 0; i < infos.length; i++) {
+      for (var j = i + 1; j < infos.length; j++) {
+        var A = infos[i], B = infos[j];
+        var gleich = A.norm === B.norm || (A.stem === B.stem && A.stem.length >= 3);
+        var nah = !gleich && A.stem.length >= 4 && B.stem.length >= 4 && editAbstand(A.stem, B.stem) <= 1;
+        if (gleich || nah) verbinde(i, j);
+      }
+    }
+    var gruppen = {};
+    infos.forEach(function (info, i) {
+      var r = wurzel(i);
+      if (!gruppen[r]) gruppen[r] = [];
+      gruppen[r].push(info.it);
+    });
+    var liste = [];
+    Object.keys(gruppen).forEach(function (k) { if (gruppen[k].length > 1) liste.push(gruppen[k]); });
+    liste.forEach(function (g) {
+      g.sort(function (a, b) { return String(a.name).localeCompare(String(b.name), 'de'); });
+    });
+    liste.sort(function (a, b) { return String(a[0].name).localeCompare(String(b[0].name), 'de'); });
+    return liste;
+  }
+
+  function renderDubletten() {
+    var host = document.getElementById('dupResults');
+    if (!host) return;
+    host.innerHTML = '';
+    if (!dupesAktiv) return;
+
+    var gruppen = findeDubletten();
+    var card = document.createElement('div');
+    card.className = 'card';
+    var head = document.createElement('div');
+    head.className = 'card-head';
+    head.innerHTML = '<h3>Ähnliche Einträge</h3>';
+    var actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.alignItems = 'center';
+    actions.style.gap = '10px';
+    actions.innerHTML = '<span class="count-pill">' + gruppen.length + '</span>';
+    var zu = document.createElement('button');
+    zu.className = 'clear-bought-btn';
+    zu.textContent = 'Schließen';
+    zu.onclick = function () { dupesAktiv = false; renderDubletten(); };
+    actions.appendChild(zu);
+    head.appendChild(actions);
+    card.appendChild(head);
+
+    if (!gruppen.length) {
+      var p = document.createElement('p');
+      p.className = 'empty-note';
+      p.textContent = 'Keine ähnlichen oder doppelten Einträge gefunden.';
+      card.appendChild(p);
+    } else {
+      var hinweis = document.createElement('p');
+      hinweis.className = 'empty-note';
+      hinweis.style.paddingBottom = '4px';
+      hinweis.textContent = 'Vermutlich dasselbe gemeint. Überflüssigen Eintrag mit ✕ löschen.';
+      card.appendChild(hinweis);
+      var ul = document.createElement('ul');
+      ul.className = 'dupe-list';
+      gruppen.forEach(function (g) {
+        var li = document.createElement('li');
+        g.forEach(function (it) {
+          var zeile = document.createElement('div');
+          zeile.className = 'dupe-entry';
+          var txt = document.createElement('span');
+          var name = document.createElement('strong');
+          name.textContent = it.name;
+          var meta = document.createElement('span');
+          meta.className = 'dupe-cat';
+          meta.textContent = ' · ' + it.category + (it.active ? ' · steht auf der Liste' : '');
+          txt.appendChild(name);
+          txt.appendChild(meta);
+          zeile.appendChild(txt);
+          var del = document.createElement('button');
+          del.className = 'row-btn';
+          del.textContent = '✕';
+          del.title = 'Diesen Eintrag löschen';
+          del.onclick = function () {
+            if (!confirm('„' + it.name + '" endgültig löschen?' +
+                         (it.active ? '\n\nAchtung: steht gerade auf der Liste.' : ''))) return;
+            loescheArtikel(it);
+          };
+          zeile.appendChild(del);
+          li.appendChild(zeile);
+        });
+        ul.appendChild(li);
+      });
+      card.appendChild(ul);
+    }
+    host.appendChild(card);
+  }
+
+  function renderAuswertung() {
+    var tbody = document.querySelector('#evalTable tbody');
+    tbody.innerHTML = '';
+    var rows = state.purchases.slice().sort(function (a, b) { return b.date < a.date ? -1 : 1; });
+    document.getElementById('purchaseCount').textContent = rows.length + (rows.length === 1 ? ' Eintrag' : ' Einträge');
+    document.getElementById('evalEmpty').style.display = rows.length ? 'none' : 'block';
+
+    // Durchschnittspreis je Artikel (ohne aktuellsten Eintrag) für Trend-Pfeile
+    var byItem = {};
+    state.purchases.forEach(function (p) { (byItem[p.itemName] = byItem[p.itemName] || []).push(p); });
+
+    rows.forEach(function (p) {
+      var tr = document.createElement('tr');
+      var hist = byItem[p.itemName].filter(function (o) { return o.id !== p.id; });
+      var avg = hist.length ? hist.reduce(function (s, o) { return s + o.price; }, 0) / hist.length : null;
+      var trend = '';
+      if (avg !== null && Math.abs(avg - p.price) > 0.01) {
+        trend = p.price > avg
+          ? '<span class="trend up">↑ vs. Ø ' + avg.toFixed(2) + ' €</span>'
+          : '<span class="trend down">↓ vs. Ø ' + avg.toFixed(2) + ' €</span>';
+      }
+      tr.innerHTML =
+        '<td class="num">' + p.date + '</td>' +
+        '<td>' + p.itemName + '</td>' +
+        '<td>' + (p.store || '—') + '</td>' +
+        '<td class="price num">' + p.price.toFixed(2) + ' €' + trend + '</td>' +
+        '<td></td>';
+      var del = document.createElement('button');
+      del.className = 'row-btn'; del.textContent = '✕';
+      del.onclick = function () {
+        deletedPurchaseIds[p.id] = true;               // sofort weg
+        state.purchases = state.purchases.filter(function (o) { return o.id !== p.id; });
+        renderAuswertung();
+        call('deletePurchase', p.id).then(function (s) {
+          delete deletedPurchaseIds[p.id];
+          setState(s);
+        }).catch(function (err) {
+          delete deletedPurchaseIds[p.id];
+          alert('Konnte den Eintrag nicht löschen: ' + (err && err.message ? err.message : String(err)));
+        });
+      };
+      tr.lastElementChild.appendChild(del);
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Ziehen-zum-Sortieren (wie Wegpunkte in Google Maps) statt Auf/Ab-Buttons:
+  // funktioniert mit Maus UND Touch über Pointer Events. attachDragHandlers()
+  // macht eine Zeile per Griff (⠿) sortierbar; beim Loslassen wird die neue
+  // Reihenfolge direkt aus der DOM-Reihenfolge gelesen und per onDrop()
+  // sofort gespeichert — kein separater "Speichern"-Klick nötig.
+  // Während des Ziehens (settingsDragging) verwirft renderEinstellungen()
+  // eingehende Neuzeichnungen (Auto-Refresh), sonst würde ein Rebuild
+  // mitten im Ziehen das Element unter dem Finger/der Maus wegreißen.
+  var settingsDragging = false;   // genau ein Zieh-Vorgang gleichzeitig
+  var activeDrag = null;
+  var autoScrollTimer = null;
+  var inFlightOrderSaves = 0;     // laufende Speicher-Aufrufe für Reihenfolgen
+
+  // Zählt laufende Reihenfolge-Speicherungen mit. Solange eine unterwegs ist,
+  // baut renderEinstellungen() die Listen nicht neu auf — sonst rendert eine
+  // ältere Server-Antwort kurz die alte Reihenfolge ("springt zurück").
+  // Das setTimeout ist ein Sicherheitsnetz, falls eine Antwort nie ankommt.
+  function beginOrderSave() {
+    inFlightOrderSaves++;
+    var done = false;
+    var finish = function () {
+      if (done) return;
+      done = true;
+      inFlightOrderSaves = Math.max(0, inFlightOrderSaves - 1);
+    };
+    setTimeout(finish, 20000);
+    return finish;
+  }
+
+  function listOrder(ul) {
+    return Array.prototype.slice.call(ul.children).map(function (row) { return row.dataset.cat; });
+  }
+
+  // Sicherheitsnetz: Kommt die Reihenfolge anders zurück als gespeichert,
+  // stimmt etwas mit der Ablage im Sheet nicht — dann lieber eine klare
+  // Meldung als ein stilles Zurückspringen.
+  function warnIfNotStored(sent, stored, label) {
+    if (!stored || sent.join('') === stored.join('')) return;
+    console.warn('Reihenfolge (' + label + ') kam anders zurück.\ngesendet: ', sent, '\ngespeichert: ', stored);
+    toast('Reihenfolge für ' + label + ' konnte nicht gespeichert werden');
+  }
+
+  function attachDragHandlers(li, handle, ul, onDrop) {
+    handle.addEventListener('pointerdown', function (e) {
+      if (activeDrag) return;                               // nie zwei Drags parallel
+      if (e.button !== undefined && e.button !== 0) return; // nur linke Maustaste
+      e.preventDefault();
+      activeDrag = {
+        li: li, ul: ul, handle: handle, onDrop: onDrop,
+        pointerId: e.pointerId, y: e.clientY,
+        startOrder: listOrder(ul).join('')
+      };
+      settingsDragging = true;
+      li.classList.add('dragging');
+      try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+      document.addEventListener('pointermove', onDragMove);
+      document.addEventListener('pointerup', endDrag);
+      // Wichtig: pointercancel feuert z. B., wenn der Browser die Geste als
+      // Scrollen übernimmt. Ohne dieses Aufräumen blieben alte Listener aktiv
+      // und haben später eine veraltete Reihenfolge über die neue gespeichert.
+      document.addEventListener('pointercancel', endDrag);
+      window.addEventListener('blur', endDrag);
+      autoScrollTimer = setInterval(autoScrollStep, 40);
+    });
+  }
+
+  function placeDragged(y) {
+    var d = activeDrag;
+    if (!d) return;
+    var rows = Array.prototype.slice.call(d.ul.children).filter(function (r) { return r !== d.li; });
+    for (var i = 0; i < rows.length; i++) {
+      var rect = rows[i].getBoundingClientRect();
+      if (y < rect.top + rect.height / 2) {
+        d.ul.insertBefore(d.li, rows[i]);
+        return;
+      }
+    }
+    d.ul.appendChild(d.li);
+  }
+
+  function onDragMove(ev) {
+    if (!activeDrag) return;
+    if (!document.contains(activeDrag.li)) { endDrag(); return; }
+    if (ev.cancelable) ev.preventDefault();
+    activeDrag.y = ev.clientY;
+    placeDragged(ev.clientY);
+  }
+
+  // Am oberen/unteren Rand mitscrollen, damit auch die weiter unten liegenden
+  // Laden-Listen bequem über die ganze Länge sortiert werden können.
+  function autoScrollStep() {
+    if (!activeDrag) return;
+    var y = activeDrag.y;
+    var zone = 70;
+    var delta = 0;
+    if (y < zone) delta = -Math.max(6, (zone - y) / 3);
+    else if (y > window.innerHeight - zone) delta = Math.max(6, (y - (window.innerHeight - zone)) / 3);
+    if (delta) {
+      window.scrollBy(0, delta);
+      placeDragged(y);
+    }
+  }
+
+  function endDrag() {
+    var d = activeDrag;
+    if (!d) return;
+    activeDrag = null;
+    settingsDragging = false;
+    clearInterval(autoScrollTimer);
+    autoScrollTimer = null;
+    d.li.classList.remove('dragging');
+    try { d.handle.releasePointerCapture(d.pointerId); } catch (err) {}
+    document.removeEventListener('pointermove', onDragMove);
+    document.removeEventListener('pointerup', endDrag);
+    document.removeEventListener('pointercancel', endDrag);
+    window.removeEventListener('blur', endDrag);
+    var newOrder = listOrder(d.ul);
+    if (newOrder.join('') === d.startOrder) return; // nichts verschoben → nichts speichern
+    d.onDrop(newOrder);
+  }
+
+  function renderEinstellungen() {
+    if (settingsDragging || inFlightOrderSaves > 0) return;
+    if (document.activeElement !== document.getElementById('s1Name')) {
+      document.getElementById('s1Name').value = state.config.store1Name;
+    }
+    if (document.activeElement !== document.getElementById('s2Name')) {
+      document.getElementById('s2Name').value = state.config.store2Name;
+    }
+    renderOrderList('s1Order', state.config.store1Order.slice());
+    renderOrderList('s2Order', state.config.store2Order.slice());
+    renderCategoryList(state.config.categories.slice());
+  }
+
+  function renderCategoryList(order) {
+    var ul = document.getElementById('categoryList');
+    ul.innerHTML = '';
+    order.forEach(function (cat) {
+      var li = document.createElement('li');
+      li.dataset.cat = cat;
+
+      var handle = document.createElement('span');
+      handle.className = 'drag-handle';
+      handle.textContent = '⠿';
+      handle.title = 'Ziehen zum Sortieren';
+      li.appendChild(handle);
+
+      var label = document.createElement('span');
+      label.className = 'sortable-label';
+      label.textContent = cat;
+      li.appendChild(label);
+
+      var btns = document.createElement('div');
+      btns.className = 'order-buttons';
+
+      if (cat !== 'Sonstiges') {
+        var edit = document.createElement('button'); edit.textContent = '✎'; edit.title = 'Umbenennen';
+        edit.onclick = function () {
+          var neu = prompt('Neuer Name für „' + cat + '":', cat);
+          if (!neu || neu.trim() === '' || neu.trim() === cat) return;
+          neu = neu.trim();
+          if (state.config.categories.indexOf(neu) !== -1) {
+            alert('Kategorie „' + neu + '" gibt es schon.');
+            return;
+          }
+          katUmbenennenLokal(state, cat, neu);                     // sofort sichtbar
+          var tid = addTransform(function (st) { katUmbenennenLokal(st, cat, neu); });
+          render();
+          call('renameCategory', cat, neu).then(function (s) {
+            removeTransform(tid); setState(s); toast('Umbenannt');
+          }).catch(function (err) {
+            removeTransform(tid); neuLaden();
+            alert(err.message || String(err));
+          });
+        };
+        var del = document.createElement('button'); del.textContent = '✕'; del.title = 'Löschen';
+        del.onclick = function () {
+          if (!confirm('Kategorie „' + cat + '" löschen? Betroffene Artikel wandern nach „Sonstiges".')) return;
+          katLoeschenLokal(state, cat);                            // sofort sichtbar
+          var tid = addTransform(function (st) { katLoeschenLokal(st, cat); });
+          render();
+          call('deleteCategory', cat).then(function (s) {
+            removeTransform(tid); setState(s); toast('Kategorie gelöscht');
+          }).catch(function (err) {
+            removeTransform(tid); neuLaden();
+            alert(err.message || String(err));
+          });
+        };
+        btns.appendChild(edit);
+        btns.appendChild(del);
+      }
+
+      li.appendChild(btns);
+      attachDragHandlers(li, handle, ul, function (newOrder) {
+        var finish = beginOrderSave();
+        call('reorderCategories', newOrder).then(function (s) {
+          finish(); setState(s);
+          warnIfNotStored(newOrder, s && s.config && s.config.categories, 'Kategorien');
+          toast('Reihenfolge gespeichert');
+        }).catch(function (err) { finish(); alert(err.message || String(err)); });
+      });
+      ul.appendChild(li);
+    });
+  }
+
+  function renderOrderList(elId, order) {
+    var ul = document.getElementById(elId);
+    ul.innerHTML = '';
+    order.forEach(function (cat) {
+      var li = document.createElement('li');
+      li.dataset.cat = cat;
+
+      var handle = document.createElement('span');
+      handle.className = 'drag-handle';
+      handle.textContent = '⠿';
+      handle.title = 'Ziehen zum Sortieren';
+      li.appendChild(handle);
+
+      var label = document.createElement('span');
+      label.className = 'sortable-label';
+      label.textContent = cat;
+      li.appendChild(label);
+
+      attachDragHandlers(li, handle, ul, function () {
+        var s1Name = document.getElementById('s1Name').value.trim() || 'Laden 1';
+        var s2Name = document.getElementById('s2Name').value.trim() || 'Laden 2';
+        // Beide Reihenfolgen aus dem DOM lesen (nicht aus state.config): sonst
+        // überschreibt ein Speichern in der einen Spalte eine kurz zuvor
+        // geänderte, noch nicht bestätigte Reihenfolge der anderen Spalte.
+        var s1Order = listOrder(document.getElementById('s1Order'));
+        var s2Order = listOrder(document.getElementById('s2Order'));
+        var finish = beginOrderSave();
+        call('updateConfig', s1Name, s1Order, s2Name, s2Order).then(function (s) {
+          finish(); setState(s);
+          if (s && s.config) {
+            warnIfNotStored(s1Order, s.config.store1Order, s.config.store1Name);
+            warnIfNotStored(s2Order, s.config.store2Order, s.config.store2Name);
+          }
+          toast('Reihenfolge gespeichert');
+        }).catch(function (err) { finish(); alert(err.message || String(err)); });
+      });
+      ul.appendChild(li);
+    });
+  }
+
+  // ---- Eigene Änderungen gewinnen, bis ihre eigene Antwort da ist ----
+  // Jede Server-Antwort enthält den kompletten Stand zum Zeitpunkt ihres
+  // Aufrufs. Tippt man drei Vorschläge schnell hintereinander an, kennt die
+  // Antwort des ersten Taps die beiden anderen noch nicht — die würden dann
+  // kurz wieder zurückspringen. Deshalb werden eigene, noch unbestätigte
+  // Änderungen nach jeder Antwort wieder obendrauf gelegt und erst gelöscht,
+  // wenn ihre eigene Antwort eingetroffen ist.
+  var optimistic = {};       // itemId -> { active?, checked?, note? }
+  var optimisticStamp = {};  // itemId -> laufende Nummer der letzten Änderung
+  var optimisticCounter = 0;
+
+  function markOptimistic(id, patch) {
+    var cur = optimistic[id] || {};
+    for (var k in patch) { if (patch.hasOwnProperty(k)) cur[k] = patch[k]; }
+    optimistic[id] = cur;
+    optimisticStamp[id] = ++optimisticCounter;
+    return optimisticStamp[id];
+  }
+
+  function clearOptimistic(id, stamp) {
+    // Nur aufräumen, wenn seitdem nichts Neueres für diesen Artikel kam.
+    if (optimisticStamp[id] === stamp) {
+      delete optimistic[id];
+      delete optimisticStamp[id];
+    }
+  }
+
+  function applyOptimistic() {
+    var ids = Object.keys(optimistic);
+    if (!ids.length) return;
+    ids.forEach(function (id) {
+      var patch = optimistic[id];
+      var it = state.items.filter(function (i) { return i.id === id; })[0];
+      if (!it) return;
+      if (patch.hasOwnProperty('active')) it.active = patch.active;
+      if (patch.hasOwnProperty('checked')) it.checked = patch.checked;
+      if (patch.hasOwnProperty('note')) it.note = patch.note;
+    });
+  }
+
+  // Gerade angelegte Artikel (noch ohne echte ID) überleben eine zwischendurch
+  // eintreffende Antwort eines anderen Aufrufs — aber nur, solange ihr eigener
+  // Aufruf noch läuft. Sonst bliebe nach der Bestätigung eine Geisterzeile
+  // neben dem echten Artikel stehen.
+  var pendingTempIds = {};
+  function keepPendingItems(previousItems) {
+    previousItems.forEach(function (it) {
+      if (it.pending && pendingTempIds[it.id]) state.items.push(it);
+    });
+  }
+
+  // Änderungen an Kategorien/Käufen betreffen nicht einzelne Artikel-Felder,
+  // sondern ganze Listen. Dafür merkt sich die App eine Umformung, die auf
+  // jeden eintreffenden Server-Stand angewendet wird, bis die eigene Antwort
+  // da ist — so erscheinen auch diese Aktionen sofort statt erst nach ~1 s.
+  var pendingTransforms = [];
+  var transformCounter = 0;
+  function addTransform(fn) {
+    var id = ++transformCounter;
+    pendingTransforms.push({ id: id, fn: fn });
+    return id;
+  }
+  function removeTransform(id) {
+    pendingTransforms = pendingTransforms.filter(function (t) { return t.id !== id; });
+  }
+  function applyTransforms() {
+    pendingTransforms.forEach(function (t) {
+      try { t.fn(state); } catch (err) { console.error('Transform fehlgeschlagen:', err); }
+    });
+  }
+
+  // Lokale Entsprechungen der Backend-Operationen (gleiche Regeln wie Code.gs)
+  function katAnlegenLokal(st, name) {
+    if (st.config.categories.indexOf(name) !== -1) return;
+    var ohne = st.config.categories.filter(function (c) { return c !== 'Sonstiges'; });
+    ohne.push(name);
+    ohne.push('Sonstiges');
+    st.config.categories = ohne;
+    st.config.store3Order = ohne;
+    if (st.config.store1Order.indexOf(name) === -1) st.config.store1Order = st.config.store1Order.concat([name]);
+    if (st.config.store2Order.indexOf(name) === -1) st.config.store2Order = st.config.store2Order.concat([name]);
+  }
+  function katUmbenennenLokal(st, alt, neu) {
+    var r = function (c) { return c === alt ? neu : c; };
+    st.config.categories = st.config.categories.map(r);
+    st.config.store1Order = st.config.store1Order.map(r);
+    st.config.store2Order = st.config.store2Order.map(r);
+    st.config.store3Order = st.config.categories;
+    st.items.forEach(function (i) { if (i.category === alt) i.category = neu; });
+  }
+  function katLoeschenLokal(st, name) {
+    var k = function (c) { return c !== name; };
+    st.config.categories = st.config.categories.filter(k);
+    st.config.store1Order = st.config.store1Order.filter(k);
+    st.config.store2Order = st.config.store2Order.filter(k);
+    st.config.store3Order = st.config.categories;
+    st.items.forEach(function (i) { if (i.category === name) i.category = 'Sonstiges'; });
+  }
+  function kaufAnlegenLokal(st, kauf) {
+    var da = st.purchases.filter(function (p) { return p.id === kauf.id; }).length > 0;
+    if (!da) st.purchases.push(kauf);
+  }
+
+  // Nach einem fehlgeschlagenen Aufruf den echten Stand neu holen, damit keine
+  // lokale Änderung stehen bleibt, die es serverseitig gar nicht gibt.
+  function neuLaden() {
+    call('getState').then(function (s) { setState(s); }).catch(function () {});
+  }
+
+  // Gelöschtes bleibt verschwunden, bis die eigene Antwort da ist — sonst
+  // blinkt es zurück, wenn zwischendurch eine andere Antwort eintrifft.
+  var deletedItemIds = {};
+  var deletedPurchaseIds = {};
+  function applyDeletions() {
+    if (Object.keys(deletedItemIds).length) {
+      state.items = state.items.filter(function (i) { return !deletedItemIds[i.id]; });
+    }
+    if (Object.keys(deletedPurchaseIds).length) {
+      state.purchases = state.purchases.filter(function (p) { return !deletedPurchaseIds[p.id]; });
+    }
+  }
+
+  var lastAppliedSeq = 0;
+  function setState(s) {
+    if (!s) {
+      console.warn('setState: leere/nullwertige Antwort vom Server ignoriert, alter Zustand bleibt erhalten.');
+      return;
+    }
+    if (typeof s.__seq === 'number') {
+      if (s.__seq < lastAppliedSeq) {
+        console.warn('setState: veraltete Antwort (#' + s.__seq + ') ignoriert, neuerer Stand (#' + lastAppliedSeq + ') bleibt erhalten.');
+        return;
+      }
+      lastAppliedSeq = s.__seq;
+    }
+    var previousItems = (state && state.items) || [];
+    state = s;
+    keepPendingItems(previousItems);
+    applyDeletions();
+    applyTransforms();
+    applyOptimistic();
+    render();
+  }
+
+  function render() {
+    renderStoreSwitch();
+    fillCategorySelect(document.getElementById('addListeCategory'));
+    fillCategorySelect(document.getElementById('addVorratCategory'));
+    renderListe();
+    renderVorrat();
+    renderDubletten();
+    renderAuswertung();
+    renderEinstellungen();
+  }
+
+  // ---- Events ----
+  document.querySelectorAll('nav.tabs button').forEach(function (btn) {
+    btn.onclick = function () {
+      document.querySelectorAll('nav.tabs button').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    };
+  });
+
+  // Neue Artikel erscheinen sofort (mit vorläufiger ID, leicht ausgegraut) und
+  // werden ersetzt, sobald der Server geantwortet hat — statt eine Sekunde auf
+  // Google zu warten, bevor überhaupt etwas passiert.
+  function addItemOptimistic(name, cat, active, okMsg, toastDauer) {
+    var tempId = 'temp-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+    pendingTempIds[tempId] = true;
+    state.items.push({
+      id: tempId, name: name, category: cat, active: !!active,
+      createdAt: '', note: '', checked: false, pending: true
+    });
+    renderListe();
+    renderVorrat();
+    call('addItem', name, cat, active).then(function (s) {
+      delete pendingTempIds[tempId];   // echter Artikel kommt mit der Antwort
+      setState(s);
+      toast(okMsg, toastDauer);
+    }).catch(function (err) {
+      delete pendingTempIds[tempId];
+      state.items = state.items.filter(function (i) { return i.id !== tempId; });
+      renderListe();
+      renderVorrat();
+      alert('Konnte „' + name + '" nicht speichern: ' + (err && err.message ? err.message : String(err)));
+    });
+  }
+
+  // Gibt es den Artikel schon (Groß-/Kleinschreibung und Umlaute egal), wird
+  // kein zweiter angelegt: der vorhandene wird verwendet, mitsamt der Kategorie,
+  // in der er bereits steht. Weicht die ausgewählte Kategorie davon ab, sagt die
+  // App das ausdrücklich. Bei nur ähnlichen Namen wird normal angelegt, aber auf
+  // den ähnlichen Eintrag hingewiesen ("Doppelte suchen" räumt auf).
+  function artikelAnlegenOderVerwenden(name, cat, aufListe, okMsg) {
+    var vorhanden = findeGleichnamigen(name);
+    if (vorhanden) {
+      var anders = vorhanden.category !== cat;
+      if (aufListe && !vorhanden.active) {
+        setItemAktiv(vorhanden, true);
+        toast(anders
+          ? '„' + vorhanden.name + '" gibt es schon unter „' + vorhanden.category +
+            '" — von dort auf die Liste geholt (nicht als „' + cat + '" neu angelegt).'
+          : '„' + vorhanden.name + '" gibt es schon — von den Vorschlägen auf die Liste geholt.', 4200);
+      } else if (aufListe) {
+        toast('„' + vorhanden.name + '" steht schon auf der Liste.', 3000);
+      } else {
+        toast(anders
+          ? '„' + vorhanden.name + '" gibt es schon unter „' + vorhanden.category +
+            '" — dort belassen, nicht als „' + cat + '" neu angelegt.'
+          : '„' + vorhanden.name + '" gibt es schon in den Vorschlägen.', 4200);
+      }
+      return;
+    }
+    var aehnlich = findeAehnlichen(name);
+    if (aehnlich) {
+      addItemOptimistic(name, cat, aufListe,
+        okMsg + ' — Achtung: „' + aehnlich.name + '" ist sehr ähnlich', 4200);
+    } else {
+      addItemOptimistic(name, cat, aufListe, okMsg);
+    }
+  }
+
+  document.getElementById('addListeForm').onsubmit = function (e) {
+    e.preventDefault();
+    var input = document.getElementById('addListeName');
+    var name = input.value.trim();
+    var cat = document.getElementById('addListeCategory').value;
+    if (!name) return;
+    input.value = '';
+    artikelAnlegenOderVerwenden(name, cat, true, 'Hinzugefügt');
+  };
+
+  document.getElementById('addVorratForm').onsubmit = function (e) {
+    e.preventDefault();
+    var input = document.getElementById('addVorratName');
+    var name = input.value.trim();
+    var cat = document.getElementById('addVorratCategory').value;
+    if (!name) return;
+    input.value = '';
+    artikelAnlegenOderVerwenden(name, cat, false, 'Zu Vorschlägen hinzugefügt');
+  };
+
+  document.getElementById('findDupes').onclick = function () {
+    dupesAktiv = true;
+    renderDubletten();
+    document.getElementById('dupResults').scrollIntoView({ block: 'nearest' });
+  };
+
+  document.getElementById('addPurchaseForm').onsubmit = function (e) {
+    e.preventDefault();
+    var name = document.getElementById('pItem').value.trim();
+    var price = parseFloat(document.getElementById('pPrice').value);
+    var date = document.getElementById('pDate').value;
+    var store = document.getElementById('pStore').value.trim();
+    if (!name || isNaN(price)) return;
+    var kauf = {
+      id: 'temp-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      itemName: name, price: price, date: date, store: store
+    };
+    kaufAnlegenLokal(state, kauf);                                 // sofort in der Tabelle
+    var tid = addTransform(function (st) { kaufAnlegenLokal(st, kauf); });
+    renderAuswertung();
+    document.getElementById('addPurchaseForm').reset();
+    document.getElementById('pDate').valueAsDate = new Date();
+    call('addPurchase', name, price, date, store).then(function (s) {
+      removeTransform(tid);
+      setState(s);
+      toast('Kauf gespeichert');
+    }).catch(function (err) {
+      removeTransform(tid); neuLaden();
+      alert('Konnte den Kauf nicht speichern: ' + (err && err.message ? err.message : String(err)));
+    });
+  };
+
+  // Nur noch für die Laden-Namen (die Reihenfolgen speichern sich beim
+  // Ziehen bereits selbst, s. attachDragHandlers oben).
+  document.getElementById('saveConfig').onclick = function () {
+    var s1Name = document.getElementById('s1Name').value.trim() || 'Laden 1';
+    var s2Name = document.getElementById('s2Name').value.trim() || 'Laden 2';
+    var finish = beginOrderSave();
+    call('updateConfig', s1Name, listOrder(document.getElementById('s1Order')),
+                         s2Name, listOrder(document.getElementById('s2Order'))).then(function (s) {
+      finish();
+      setState(s);
+      toast('Namen gespeichert');
+    }).catch(function (err) { finish(); alert(err.message || String(err)); });
+  };
+
+  document.getElementById('addCategoryForm').onsubmit = function (e) {
+    e.preventDefault();
+    var input = document.getElementById('newCategoryName');
+    var name = input.value.trim();
+    if (!name) return;
+    if (state.config.categories.indexOf(name) !== -1) {
+      alert('Kategorie „' + name + '" gibt es schon.');
+      return;
+    }
+    input.value = '';
+    katAnlegenLokal(state, name);                                  // sofort sichtbar
+    var tid = addTransform(function (st) { katAnlegenLokal(st, name); });
+    render();
+    call('addCategory', name).then(function (s) {
+      removeTransform(tid);
+      setState(s);
+      toast('Kategorie angelegt');
+    }).catch(function (err) {
+      removeTransform(tid); neuLaden();
+      alert(err.message || String(err));
+    });
+  };
+
+  // ---- Start ----
+  document.getElementById('pDate').valueAsDate = new Date();
+  // Google Apps Script liefert gelegentlich eine leere/null-Antwort ohne
+  // echten Fehler (bekannte Flakiness der Plattform, kein Bug in dieser App).
+  // Deshalb: bei leerer Antwort automatisch mit kurzer Pause erneut versuchen,
+  // statt die Seite abstürzen zu lassen.
+  function loadState(retriesLeft) {
+    if (retriesLeft === undefined) retriesLeft = 4;
+    call('getState').then(function (s) {
+      console.log('getState() Antwort:', s);
+      if (!s) {
+        if (retriesLeft > 0) {
+          document.getElementById('subtitle').textContent = 'wird geladen … (erneuter Versuch)';
+          setTimeout(function () { loadState(retriesLeft - 1); }, 900);
+        } else {
+          document.getElementById('subtitle').textContent = 'Laden fehlgeschlagen — bitte Seite neu laden (F5).';
+        }
+        return;
+      }
+      setState(s);
+    }).catch(function (err) {
+      console.error('Ladefehler (voller Fehler):', err);
+      if (retriesLeft > 0) {
+        setTimeout(function () { loadState(retriesLeft - 1); }, 900);
+      } else {
+        document.getElementById('subtitle').textContent =
+          'Fehler beim Laden: ' + (err && err.message ? err.message : JSON.stringify(err));
+      }
+    });
+  }
+  loadState();
+
+  // ---- Auto-Refresh, damit beide Personen aktuelle Daten sehen ----
+  // Kein fester Takt: solange jemand aktiv ist (letzte Änderung < 3 Min her)
+  // wird häufig aktualisiert, danach deutlich seltener — das hält die Liste
+  // beim gemeinsamen Einkaufen nahezu live, ohne im Hintergrund den ganzen Tag
+  // sinnlos Anfragen an Google zu schicken. Während die Seite im Hintergrund
+  // ist, wird gar nicht aktualisiert; beim Zurückkommen sofort.
+  var POLL_ACTIVE = 5000;
+  var POLL_IDLE = 30000;
+  var ACTIVE_WINDOW = 180000;
+  var refreshTimer = null;
+  var lastRefreshStart = 0;
+
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    var idle = (Date.now() - lastLocalAction) > ACTIVE_WINDOW;
+    refreshTimer = setTimeout(runRefresh, idle ? POLL_IDLE : POLL_ACTIVE);
+  }
+
+  function runRefresh() {
+    // Nicht dazwischenfunken: nicht im Hintergrund, nicht während eine
+    // Änderung unterwegs ist und nicht mitten in einer Eingabe/Sortierung.
+    if (document.hidden || pendingMutations > 0 || editingNoteId ||
+        settingsDragging || inFlightOrderSaves > 0) {
+      scheduleRefresh();
+      return;
+    }
+    lastRefreshStart = Date.now();
+    call('getState').then(function (s) {
+      setState(s);
+      scheduleRefresh();
+    }).catch(function (err) {
+      console.error('Refresh-Fehler:', err);
+      scheduleRefresh();
+    });
+  }
+
+  function refreshNow() {
+    if (document.hidden || pendingMutations > 0) return;
+    if (Date.now() - lastRefreshStart < 1500) return; // nicht spammen
+    clearTimeout(refreshTimer);
+    runRefresh();
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { clearTimeout(refreshTimer); return; }
+    lastLocalAction = Date.now(); // zurück in der App = wieder aktiv
+    refreshNow();
+    scheduleRefresh();
+  });
+  window.addEventListener('focus', refreshNow);
+  scheduleRefresh();
+</script>
+</body>
+</html>
