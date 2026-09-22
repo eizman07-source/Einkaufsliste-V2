@@ -175,6 +175,13 @@
   ul.item-list li.pending .checkbox, .chip.pending { cursor: default; }
   /* Kopfzeile der Vorschläge mit "Doppelte suchen" */
   .vorrat-kopf { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .vorrat-search-wrap { padding: 0 16px 12px; }
+  .vorrat-search-wrap input[type="search"] {
+    width: 100%; box-sizing: border-box;
+    font-family: inherit; font-size: 16px; /* mind. 16px, sonst zoomt iOS beim Antippen automatisch rein */
+    border: 1px solid var(--line); border-radius: 7px;
+    padding: 8px 10px; background: var(--surface); color: var(--ink);
+  }
   ul.dupe-list { list-style: none; margin: 0; padding: 0; }
   ul.dupe-list li { padding: 8px 16px; border-bottom: 1px solid var(--line); }
   ul.dupe-list li:last-child { border-bottom: none; }
@@ -336,6 +343,9 @@
     <div class="vorrat-kopf">
       <p class="subtitle" style="margin:0;">Eure Vorschläge für regelmäßig gekaufte Lebensmittel. Antippen legt den Artikel auf die aktuelle Liste.</p>
       <button class="clear-bought-btn" id="findDupes">Doppelte suchen</button>
+    </div>
+    <div class="vorrat-search-wrap">
+      <input type="search" id="vorratSearch" placeholder="Vorschläge durchsuchen …">
     </div>
     <div id="dupResults"></div>
     <div id="vorratGroups"></div>
@@ -810,12 +820,34 @@
     });
   }
 
+  // Freitext-Suche im Vorschläge-Tab: Treffer per Teilstring auf dem
+  // normalisierten Namen (normName faltet Umlaute/Groß-Kleinschreibung schon
+  // für den Dubletten-Check) — "soja" findet also auch "Sojamilch" oder
+  // "Bio-Soja-Drink". Leere Kategorien nach dem Filtern werden ausgeblendet.
+  var vorratSuchbegriff = '';
+
   function renderVorrat() {
-    var groups = groupByCategory(state.items, state.config.categories);
+    var alleGroups = groupByCategory(state.items, state.config.categories);
+    var suche = normName(vorratSuchbegriff);
+    var groups = !suche ? alleGroups : alleGroups
+      .map(function (g) {
+        return { category: g.category, items: g.items.filter(function (it) {
+          return normName(it.name).indexOf(suche) !== -1;
+        }) };
+      })
+      .filter(function (g) { return g.items.length > 0; });
     var host = document.getElementById('vorratGroups');
     host.innerHTML = '';
-    if (!groups.length) {
+    if (!alleGroups.length) {
       host.innerHTML = '<div class="card"><p class="empty-note">Noch keine Vorschläge. Leg unten den ersten an.</p></div>';
+    } else if (!groups.length) {
+      var noHitCard = document.createElement('div');
+      noHitCard.className = 'card';
+      var noHitNote = document.createElement('p');
+      noHitNote.className = 'empty-note';
+      noHitNote.textContent = 'Keine Vorschläge gefunden für „' + vorratSuchbegriff + '".';
+      noHitCard.appendChild(noHitNote);
+      host.appendChild(noHitCard);
     }
     groups.forEach(function (g) {
       var card = document.createElement('div');
@@ -1534,6 +1566,11 @@
     dupesAktiv = true;
     renderDubletten();
     document.getElementById('dupResults').scrollIntoView({ block: 'nearest' });
+  };
+
+  document.getElementById('vorratSearch').oninput = function (e) {
+    vorratSuchbegriff = e.target.value;
+    renderVorrat();
   };
 
   document.getElementById('addPurchaseForm').onsubmit = function (e) {
