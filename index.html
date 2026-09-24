@@ -592,13 +592,21 @@
     });
   }
 
+  // Wird bei jedem render() neu aufgebaut (z. B. nach jedem Polling-Update),
+  // damit neue/umbenannte/gelöschte Kategorien sofort auftauchen. Ohne die
+  // aktuelle Auswahl zu merken, würde das Dropdown dabei jedes Mal auf die
+  // erste Kategorie zurückspringen — auch mitten in der Eingabe.
   function fillCategorySelect(sel) {
+    var vorher = sel.value;
     sel.innerHTML = '';
     state.config.categories.forEach(function (c) {
       var o = document.createElement('option');
       o.value = c; o.textContent = c;
       sel.appendChild(o);
     });
+    if (vorher && state.config.categories.indexOf(vorher) !== -1) {
+      sel.value = vorher;
+    }
   }
 
   function groupByCategory(items, order) {
