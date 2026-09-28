@@ -105,11 +105,21 @@
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--muted);
-    padding: 10px 12px;
+    padding: 10px 8px;
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
+  /* Fünf Tabs passen auf schmalen Handys nicht immer in eine Zeile — dann
+     lässt sich die Leiste seitlich wischen, statt umzubrechen. Die Trennlinie
+     ist ein Schatten statt border, weil ein scrollbarer Bereich sonst die
+     grüne Unterstreichung des aktiven Tabs abschneidet. */
+  nav.tabs {
+    overflow-x: auto; scrollbar-width: none; gap: 2px;
+    border-bottom: none !important; box-shadow: inset 0 -1px 0 var(--line);
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
   nav.tabs button.active { color: var(--ink); border-bottom-color: var(--accent); }
 
   main { max-width: 760px; margin: 0 auto; padding: 20px; }
@@ -256,6 +266,77 @@
   .chip .x { color: var(--muted); background: none; border: none; font-size: 0.75rem; padding: 3px 6px; cursor: pointer; border-radius: 999px; }
   .chip .x:hover { color: var(--danger); background: var(--danger-soft); }
   .empty-note { color: var(--muted); font-size: 0.85rem; padding: 16px; }
+  /* ---- Rezepte ---- */
+  [hidden] { display: none !important; }
+  .vorrat-kopf .clear-bought-btn { white-space: nowrap; flex-shrink: 0; }
+  .rezept-karte {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--line); cursor: pointer;
+  }
+  .rezept-karte:last-child { border-bottom: none; }
+  .rk-titel { font-weight: 500; font-size: 0.95rem; }
+  .rk-meta { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+  .rk-pfeil { color: var(--muted); font-size: 1.2rem; }
+  .link-btn {
+    border: none; background: none; color: var(--accent); font-family: inherit;
+    font-size: 0.85rem; padding: 4px 0; cursor: pointer;
+  }
+  .rezept-titel { font-size: 1.35rem; margin-top: 4px; }
+  #rezeptHost > .link-btn { align-self: flex-start; }
+  ul.zutaten-list { list-style: none; margin: 0; padding: 0; }
+  ul.zutaten-list li {
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    border-bottom: 1px solid var(--line); cursor: pointer;
+  }
+  ul.zutaten-list li:last-child { border-bottom: none; }
+  ul.zutaten-list li.aus .z-name { color: var(--muted); text-decoration: line-through; }
+  .z-name { flex: 1; font-size: 0.93rem; }
+  .z-menge { color: var(--muted); font-size: 0.82rem; text-align: right; white-space: nowrap; }
+  .z-hinweis { display: block; color: var(--accent); font-size: 0.74rem; margin-top: 1px; }
+  ol.schritte { margin: 0; padding: 12px 16px 14px 36px; }
+  ol.schritte li { padding: 5px 0; line-height: 1.45; font-size: 0.92rem; }
+  .datei-box { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .datei-box img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); }
+  .datei-zeile {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-top: 6px; font-size: 0.8rem; color: var(--muted); word-break: break-all;
+  }
+  .editor-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+  textarea.rezept-text {
+    width: 100%; min-height: 240px; font-family: inherit; font-size: 16px; line-height: 1.4;
+    border: 1px solid var(--line); border-radius: 7px; padding: 10px;
+    background: var(--surface); color: var(--ink); resize: vertical;
+  }
+  .hinweis { color: var(--muted); font-size: 0.85rem; line-height: 1.45; margin: 0; }
+  .fehler { color: var(--danger); font-size: 0.85rem; }
+  .fehler:empty { display: none; }
+  .aktionen {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    padding: 12px 16px; border-top: 1px solid var(--line); background: var(--bg);
+  }
+  .status-text { color: var(--muted); font-size: 0.82rem; }
+  button.secondary {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    font-family: inherit; font-size: 0.85rem; padding: 8px 14px; border-radius: 7px; cursor: pointer;
+    text-decoration: none; display: inline-block;
+  }
+  a.secondary {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    font-size: 0.85rem; padding: 8px 14px; border-radius: 7px; text-decoration: none; display: inline-block;
+  }
+  button.secondary:disabled { opacity: 0.5; cursor: default; }
+  button.danger { color: var(--danger); }
+  .vorschau-zutat {
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.88rem;
+  }
+  .vorschau-zutat:last-child { border-bottom: none; }
+  .vz-name { flex: 1 1 150px; }
+  .vz-name small { color: var(--muted); }
+  .vorschau-zutat select { flex: 1 1 160px; min-width: 0; }
+  .vorschau-titel { font-weight: 600; font-size: 0.95rem; }
+  .rezept-unten { display: flex; gap: 8px; flex-wrap: wrap; }
+
 
   table.eval-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   table.eval-table th, table.eval-table td { text-align: left; padding: 9px 16px; border-bottom: 1px solid var(--line); }
@@ -321,8 +402,9 @@
   <nav class="tabs">
     <button data-tab="liste" class="active">Liste</button>
     <button data-tab="vorrat">Vorschläge</button>
+    <button data-tab="rezepte">Rezepte</button>
     <button data-tab="auswertung">Auswertung</button>
-    <button data-tab="einstellungen">Einstellungen</button>
+    <button data-tab="einstellungen" title="Einstellungen" aria-label="Einstellungen" style="font-size:1.05rem; line-height:1;">⚙︎</button>
   </nav>
 </header>
 
@@ -356,6 +438,18 @@
         <button class="primary" type="submit">+</button>
       </form>
     </div>
+  </section>
+
+  <section class="panel" id="panel-rezepte">
+    <div class="vorrat-kopf" id="rezeptKopf">
+      <p class="subtitle" style="margin:0;">Eure gesammelten Rezepte. Rezept öffnen, Zutaten auswählen, auf die Einkaufsliste setzen.</p>
+      <button class="clear-bought-btn" id="neuesRezept">+ Rezept</button>
+    </div>
+    <div class="vorrat-search-wrap" id="rezeptSucheWrap">
+      <input type="search" id="rezeptSuche" placeholder="Rezept oder Zutat suchen …">
+    </div>
+    <div id="rezeptHost" style="display:flex; flex-direction:column; gap:18px;"></div>
+    <input type="file" id="rezeptDateiInput" accept="image/*,application/pdf" multiple hidden>
   </section>
 
   <section class="panel" id="panel-auswertung">
@@ -505,6 +599,14 @@
     return result;
   }
 
+  // Direkter Aufruf ohne Warteschlange und ohne State-Übernahme — für reine
+  // Lese-Aufrufe wie das Laden einer Rezeptkarte (Antwort ist kein App-Stand).
+  function rpcDirekt(fn, args) {
+    return fetch(API_URL, { method: 'POST', body: JSON.stringify({ rpc: fn, args: args }) })
+      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+      .then(function (data) { if (!data.ok) throw new Error(data.error || 'Serverfehler'); return data.state; });
+  }
+
   var state = { items: [], purchases: [], config: null };
   var currentStore = 1; // 1, 2 oder 3 ("Standard")
 
@@ -561,7 +663,7 @@
     var s = stammName(name);
     if (s.length < 4) return null;
     var treffer = state.items.filter(function (i) {
-      if (i.pending) return false;
+      if (i.pending || istRezeptZutat(i)) return false;
       var t = stammName(i.name);
       return t.length >= 4 && (t === s || editAbstand(t, s) <= 1);
     });
@@ -835,7 +937,7 @@
   var vorratSuchbegriff = '';
 
   function renderVorrat() {
-    var alleGroups = groupByCategory(state.items, state.config.categories);
+    var alleGroups = groupByCategory(state.items.filter(function (i) { return !istRezeptZutat(i); }), state.config.categories);
     var suche = normName(vorratSuchbegriff);
     var groups = !suche ? alleGroups : alleGroups
       .map(function (g) {
@@ -935,7 +1037,7 @@
   var dupesAktiv = false;
 
   function findeDubletten() {
-    var infos = state.items.filter(function (i) { return !i.pending; }).map(function (it) {
+    var infos = state.items.filter(function (i) { return !i.pending && !istRezeptZutat(i); }).map(function (it) {
       return { it: it, norm: normName(it.name), stem: stammName(it.name) };
     });
     var eltern = infos.map(function (_, i) { return i; });
@@ -1470,6 +1572,571 @@
     render();
   }
 
+
+  // ======================= Rezepte =======================
+  // Rezepte liegen im Sheet "Recipes", Rezeptkarten (Fotos/PDF) im Google
+  // Drive. Zutaten, die über ein Rezept auf die Liste kommen, tragen
+  // source = 'rezept': sie erscheinen nicht in den Vorschlägen und werden beim
+  // "Liste bereinigen" gelöscht. Gibt es die Zutat schon als Vorschlag oder
+  // steht sie schon auf der Liste, wird der vorhandene Artikel verwendet.
+  var rezeptAnsicht = { modus: 'liste', id: null }; // liste | detail | neu | bearbeiten
+  var rezeptSuchbegriff = '';
+  var rezeptAbwahl = {};    // rezeptId -> { index: true } für abgewählte Zutaten
+  var rezeptListeBusy = {}; // rezeptId -> true, solange Zutaten eingetragen werden
+  var rezeptUpload = {};    // rezeptId -> Statustext beim Hochladen
+  var dateiCache = {};      // dateiId -> { laedt } | { url, mimeType } | { fehler }
+  var dateiZielRezept = null;
+  var letzteRezeptSignatur = '';
+
+  var REZEPT_BEISPIEL =
+    'Titel: Cremiges Hähnchen-Curry\n' +
+    'Info: 30 Min\n' +
+    'Zutaten:\n' +
+    '- Hähnchenbrust | 250 g | Fleisch & Fisch\n' +
+    '- Zwiebel | 1 Stück | Obst & Gemüse\n' +
+    '- Kokosmilch | 200 ml | Trockenwaren & Konserven\n' +
+    'Zubereitung:\n' +
+    '1. Reis nach Packungsangabe kochen.\n' +
+    '2. Zwiebel würfeln und mit dem Hähnchen anbraten.';
+
+  function rezepte() { return (state && state.recipes) || []; }
+  function findeRezept(id) { return rezepte().filter(function (r) { return r.id === id; })[0] || null; }
+  function istRezeptZutat(it) { return it && it.source === 'rezept'; }
+
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+
+  function fehlerText(err) {
+    var msg = err && err.message ? err.message : String(err);
+    if (/Unbekannte Anfrage/.test(msg)) {
+      msg += ' — ist die neue Code.gs schon in Apps Script eingefügt und als neue Version bereitgestellt?';
+    }
+    return msg;
+  }
+
+  // ---- Text-Format zum Einfügen (kommt von Claude, lässt sich auch tippen) ----
+  function parseRezeptText(text) {
+    var r = { title: '', info: '', ingredients: [], steps: [] };
+    var abschnitt = '';
+    String(text || '').split(/\r?\n/).forEach(function (zeile) {
+      var t = zeile.trim();
+      if (!t) return;
+      var m;
+      if ((m = t.match(/^(titel|rezept)\s*:\s*(.+)$/i))) { r.title = m[2].trim(); abschnitt = ''; return; }
+      if ((m = t.match(/^(info|dauer|zeit)\s*:\s*(.*)$/i))) { r.info = m[2].trim(); abschnitt = ''; return; }
+      if (t.length < 40 && /^zutaten\b[^|]*:?$/i.test(t)) { abschnitt = 'z'; return; }
+      if (t.length < 40 && /^(zubereitung|schritte|anleitung|kochanweisung)\b[^|]*:?$/i.test(t)) { abschnitt = 's'; return; }
+      if (abschnitt === 'z') {
+        var teile = t.replace(/^[-*•·]\s*/, '').split('|').map(function (x) { return x.trim(); });
+        if (teile[0]) r.ingredients.push({ name: teile[0], amount: teile[1] || '', category: teile[2] || '' });
+      } else if (abschnitt === 's') {
+        r.steps.push(t.replace(/^\d+\s*[.)]\s*/, ''));
+      } else if (!r.title) {
+        r.title = t;
+      }
+    });
+    return r;
+  }
+
+  function rezeptZuText(r) {
+    var z = ['Titel: ' + r.title];
+    if (r.info) z.push('Info: ' + r.info);
+    z.push('Zutaten:');
+    r.ingredients.forEach(function (i) {
+      z.push('- ' + i.name + ' | ' + (i.amount || '') + ' | ' + (i.category || ''));
+    });
+    z.push('Zubereitung:');
+    r.steps.forEach(function (s, n) { z.push((n + 1) + '. ' + s); });
+    return z.join('\n');
+  }
+
+  // Kategorie für eine Zutat: gibt es den Artikel schon bei euch, gilt dessen
+  // Kategorie; sonst die mitgelieferte (falls es sie gibt); sonst "Sonstiges".
+  function vorgeschlageneKategorie(ing) {
+    var cats = state.config.categories;
+    var vorhanden = findeGleichnamigen(ing.name);
+    if (vorhanden && cats.indexOf(vorhanden.category) !== -1) return vorhanden.category;
+    if (cats.indexOf(ing.category) !== -1) return ing.category;
+    var n = normName(ing.category);
+    if (!n) return 'Sonstiges';
+    var genau = cats.filter(function (c) { return normName(c) === n; })[0];
+    if (genau) return genau;
+    // Teilwort, z. B. „Konserven" → „Trockenwaren & Konserven" (nur wenn eindeutig)
+    var teil = cats.filter(function (c) { var cn = normName(c); return cn.indexOf(n) !== -1 || n.indexOf(cn) !== -1; });
+    return teil.length === 1 ? teil[0] : 'Sonstiges';
+  }
+
+  // Namen, die gerade offen (nicht abgehakt) auf der Liste stehen
+  function offeneNamen() {
+    var m = {};
+    state.items.forEach(function (i) { if (i.active && !i.checked) m[normName(i.name)] = true; });
+    return m;
+  }
+
+  // ---- Dateien ----
+  function dateiVorbereiten(file) {
+    return new Promise(function (resolve, reject) {
+      if (/^image\//.test(file.type) || /\.(jpe?g|png|heic|heif|webp)$/i.test(file.name)) {
+        // Fotos vor dem Hochladen verkleinern: Handyfotos haben oft 4–8 MB,
+        // für eine lesbare Rezeptkarte reichen ~1800 px locker.
+        var url = URL.createObjectURL(file);
+        var img = new Image();
+        img.onload = function () {
+          var max = 1800;
+          var f = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+          var c = document.createElement('canvas');
+          c.width = Math.round(img.naturalWidth * f);
+          c.height = Math.round(img.naturalHeight * f);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(url);
+          var d = c.toDataURL('image/jpeg', 0.82);
+          resolve({ name: (file.name || 'Rezeptkarte').replace(/\.[^.]+$/, '') + '.jpg', mimeType: 'image/jpeg', data: d.split(',')[1] });
+        };
+        img.onerror = function () {
+          URL.revokeObjectURL(url);
+          reject(new Error('„' + file.name + '" konnte nicht als Bild gelesen werden.'));
+        };
+        img.src = url;
+      } else if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+        if (file.size > 12 * 1024 * 1024) { reject(new Error('PDF ist zu groß (max. 12 MB).')); return; }
+        var reader = new FileReader();
+        reader.onload = function () {
+          resolve({ name: file.name || 'Rezeptkarte.pdf', mimeType: 'application/pdf', data: String(reader.result).split(',')[1] });
+        };
+        reader.onerror = function () { reject(new Error('PDF konnte nicht gelesen werden.')); };
+        reader.readAsDataURL(file);
+      } else {
+        reject(new Error('„' + file.name + '": nur Fotos oder PDF-Dateien möglich.'));
+      }
+    });
+  }
+
+  function dateienHochladen(rezeptId, files) {
+    var liste = Array.prototype.slice.call(files || []);
+    if (!liste.length) return Promise.resolve();
+    var kette = Promise.resolve();
+    liste.forEach(function (file, i) {
+      kette = kette.then(function () {
+        rezeptUpload[rezeptId] = (liste.length > 1 ? 'Datei ' + (i + 1) + ' von ' + liste.length : 'Datei') + ' wird hochgeladen …';
+        renderRezepte();
+        return dateiVorbereiten(file).then(function (d) {
+          return call('addRecipeFile', rezeptId, d.name, d.mimeType, d.data);
+        }).then(function (s) { setState(s); });
+      });
+    });
+    return kette.then(function () {
+      delete rezeptUpload[rezeptId];
+      renderRezepte();
+      toast(liste.length === 1 ? 'Datei gespeichert' : liste.length + ' Dateien gespeichert');
+    }, function (err) {
+      delete rezeptUpload[rezeptId];
+      renderRezepte();
+      alert('Hochladen fehlgeschlagen: ' + fehlerText(err));
+    });
+  }
+
+  function ladeDatei(rezeptId, f) {
+    dateiCache[f.id] = { laedt: true };
+    rpcDirekt('getRecipeFile', [rezeptId, f.id]).then(function (d) {
+      var bin = atob(d.data);
+      var arr = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      var blob = new Blob([arr], { type: d.mimeType || f.mimeType });
+      dateiCache[f.id] = { url: URL.createObjectURL(blob), mimeType: blob.type };
+      renderRezepte();
+    }).catch(function (err) {
+      dateiCache[f.id] = { fehler: fehlerText(err) };
+      renderRezepte();
+    });
+  }
+
+  function dateiCacheSignatur(r) {
+    return (r ? r.files : []).map(function (f) {
+      var c = dateiCache[f.id];
+      return f.id + ':' + (!c ? '-' : c.laedt ? 'l' : c.fehler ? 'f' : 'ok');
+    }).join(',');
+  }
+
+  // ---- Darstellung ----
+  function renderRezepte() {
+    var host = document.getElementById('rezeptHost');
+    if (!host || !state.config) return;
+    var modus = rezeptAnsicht.modus;
+    // Editor nie neu aufbauen (Hintergrund-Aktualisierung) — sonst wären der
+    // eingefügte Text und die ausgewählten Fotos weg.
+    if (modus === 'neu' || modus === 'bearbeiten') return;
+    var r = null;
+    if (modus === 'detail') {
+      r = findeRezept(rezeptAnsicht.id);
+      if (!r) { rezeptAnsicht = { modus: 'liste', id: null }; modus = 'liste'; }
+    }
+    document.getElementById('rezeptKopf').hidden = modus !== 'liste';
+    document.getElementById('rezeptSucheWrap').hidden = modus !== 'liste';
+    if (r) {
+      r.files.forEach(function (f) { if (!dateiCache[f.id]) ladeDatei(r.id, f); });
+    }
+    // Nur neu zeichnen, wenn sich etwas Sichtbares geändert hat — sonst
+    // flackern Bilder und die Scrollposition springt bei jedem Polling.
+    var sig = JSON.stringify(modus === 'liste'
+      ? ['liste', rezepte(), rezeptSuchbegriff]
+      : ['detail', r, offeneNamen(), rezeptAbwahl[r.id] || {}, !!rezeptListeBusy[r.id], rezeptUpload[r.id] || '', dateiCacheSignatur(r), state.config.categories]);
+    if (sig === letzteRezeptSignatur) return;
+    letzteRezeptSignatur = sig;
+    host.innerHTML = '';
+    if (modus === 'liste') renderRezeptListe(host);
+    else renderRezeptDetail(host, r);
+  }
+
+  function renderRezeptListe(host) {
+    var suche = normName(rezeptSuchbegriff);
+    var alle = rezepte();
+    var liste = alle.slice().sort(function (a, b) {
+      return a.title.localeCompare(b.title, 'de', { sensitivity: 'base' });
+    }).filter(function (r) {
+      if (!suche) return true;
+      if (normName(r.title).indexOf(suche) !== -1) return true;
+      return r.ingredients.some(function (i) { return normName(i.name).indexOf(suche) !== -1; });
+    });
+    var card = mk('div', 'card');
+    if (!alle.length) {
+      card.appendChild(mk('p', 'empty-note', 'Noch keine Rezepte. Tippe oben auf „+ Rezept", um das erste anzulegen.'));
+    } else if (!liste.length) {
+      card.appendChild(mk('p', 'empty-note', 'Keine Rezepte gefunden für „' + rezeptSuchbegriff + '".'));
+    } else {
+      liste.forEach(function (r) {
+        var zeile = mk('div', 'rezept-karte');
+        var links = mk('div');
+        links.appendChild(mk('div', 'rk-titel', r.title));
+        var meta = [r.ingredients.length + (r.ingredients.length === 1 ? ' Zutat' : ' Zutaten')];
+        if (r.info) meta.push(r.info);
+        if (r.files.length) meta.push(r.files.length === 1 ? 'Rezeptkarte' : r.files.length + ' Dateien');
+        links.appendChild(mk('div', 'rk-meta', meta.join(' · ')));
+        zeile.appendChild(links);
+        zeile.appendChild(mk('span', 'rk-pfeil', '›'));
+        zeile.onclick = function () { oeffneRezept(r.id); };
+        card.appendChild(zeile);
+      });
+    }
+    host.appendChild(card);
+  }
+
+  function renderRezeptDetail(host, r) {
+    var offen = offeneNamen();
+    var abwahl = rezeptAbwahl[r.id] || {};
+
+    var kopf = mk('div');
+    var zurueck = mk('button', 'link-btn', '← Alle Rezepte');
+    zurueck.onclick = zeigeRezeptListe;
+    kopf.appendChild(zurueck);
+    kopf.appendChild(mk('h2', 'rezept-titel', r.title));
+    if (r.info) kopf.appendChild(mk('div', 'subtitle', r.info));
+    host.appendChild(kopf);
+
+    // Zutaten
+    var zCard = mk('div', 'card');
+    var zHead = mk('div', 'card-head');
+    zHead.appendChild(mk('h3', null, 'Zutaten'));
+    zHead.appendChild(mk('span', 'count-pill', 'für 2 Personen'));
+    zCard.appendChild(zHead);
+    var ul = mk('ul', 'zutaten-list');
+    var anzahl = 0;
+    r.ingredients.forEach(function (ing, idx) {
+      var an = !abwahl[idx];
+      if (an) anzahl++;
+      var li = mk('li', an ? '' : 'aus');
+      var box = mk('div', 'checkbox' + (an ? ' checked' : ''), an ? '✓' : '');
+      box.setAttribute('role', 'checkbox');
+      box.setAttribute('aria-checked', an ? 'true' : 'false');
+      li.appendChild(box);
+      var name = mk('span', 'z-name', ing.name);
+      if (offen[normName(ing.name)]) name.appendChild(mk('span', 'z-hinweis', 'steht schon auf der Liste – Menge wird ergänzt'));
+      li.appendChild(name);
+      if (ing.amount) li.appendChild(mk('span', 'z-menge', ing.amount));
+      li.onclick = function () {
+        var a = rezeptAbwahl[r.id] || {};
+        if (a[idx]) delete a[idx]; else a[idx] = true;
+        rezeptAbwahl[r.id] = a;
+        renderRezepte();
+      };
+      ul.appendChild(li);
+    });
+    zCard.appendChild(ul);
+    var zAkt = mk('div', 'aktionen');
+    var busy = !!rezeptListeBusy[r.id];
+    var aufListe = mk('button', 'primary', busy ? 'Wird eingetragen …' : 'Auf die Einkaufsliste (' + anzahl + ')');
+    aufListe.disabled = busy || !anzahl;
+    aufListe.onclick = function () { zutatenAufListe(r); };
+    zAkt.appendChild(aufListe);
+    var alleAn = anzahl === r.ingredients.length;
+    var umschalten = mk('button', 'link-btn', alleAn ? 'Alle abwählen' : 'Alle auswählen');
+    umschalten.onclick = function () {
+      var a = {};
+      if (alleAn) r.ingredients.forEach(function (_, i) { a[i] = true; });
+      rezeptAbwahl[r.id] = a;
+      renderRezepte();
+    };
+    zAkt.appendChild(umschalten);
+    zCard.appendChild(zAkt);
+    host.appendChild(zCard);
+
+    // Rezeptkarte(n)
+    var dCard = mk('div', 'card');
+    var dHead = mk('div', 'card-head');
+    dHead.appendChild(mk('h3', null, 'Rezeptkarte'));
+    dCard.appendChild(dHead);
+    if (!r.files.length) {
+      dCard.appendChild(mk('p', 'empty-note', 'Noch keine Rezeptkarte hinterlegt.'));
+    }
+    r.files.forEach(function (f) {
+      var box = mk('div', 'datei-box');
+      var c = dateiCache[f.id] || { laedt: true };
+      if (c.laedt) {
+        box.appendChild(mk('div', 'status-text', 'wird geladen …'));
+      } else if (c.fehler) {
+        box.appendChild(mk('div', 'fehler', 'Konnte nicht geladen werden: ' + c.fehler));
+        var nochmal = mk('button', 'link-btn', 'Nochmal versuchen');
+        nochmal.onclick = function () { delete dateiCache[f.id]; renderRezepte(); };
+        box.appendChild(nochmal);
+      } else if (/^image\//.test(c.mimeType)) {
+        var img = mk('img');
+        img.src = c.url;
+        img.alt = f.name;
+        box.appendChild(img);
+      } else {
+        var a = mk('a', 'secondary', 'PDF öffnen');
+        a.href = c.url; a.target = '_blank'; a.rel = 'noopener';
+        box.appendChild(a);
+      }
+      var fz = mk('div', 'datei-zeile');
+      fz.appendChild(mk('span', null, f.name));
+      var del = mk('button', 'row-btn', '✕ entfernen');
+      del.onclick = function () {
+        if (!confirm('Datei „' + f.name + '" aus dem Rezept entfernen?')) return;
+        call('deleteRecipeFile', r.id, f.id).then(setState).catch(function (err) { alert(fehlerText(err)); });
+      };
+      fz.appendChild(del);
+      box.appendChild(fz);
+      dCard.appendChild(box);
+    });
+    var dAkt = mk('div', 'aktionen');
+    var hinzu = mk('button', 'secondary', '+ Foto oder PDF hinzufügen');
+    hinzu.disabled = !!rezeptUpload[r.id];
+    hinzu.onclick = function () {
+      dateiZielRezept = r.id;
+      document.getElementById('rezeptDateiInput').click();
+    };
+    dAkt.appendChild(hinzu);
+    if (rezeptUpload[r.id]) dAkt.appendChild(mk('span', 'status-text', rezeptUpload[r.id]));
+    dCard.appendChild(dAkt);
+    host.appendChild(dCard);
+
+    // Zubereitung
+    var sCard = mk('div', 'card');
+    var sHead = mk('div', 'card-head');
+    sHead.appendChild(mk('h3', null, 'Zubereitung'));
+    sCard.appendChild(sHead);
+    if (!r.steps.length) {
+      sCard.appendChild(mk('p', 'empty-note', 'Keine Kochschritte hinterlegt.'));
+    } else {
+      var ol = mk('ol', 'schritte');
+      r.steps.forEach(function (s) { ol.appendChild(mk('li', null, s)); });
+      sCard.appendChild(ol);
+    }
+    host.appendChild(sCard);
+
+    var unten = mk('div', 'rezept-unten');
+    var bearb = mk('button', 'secondary', 'Text bearbeiten');
+    bearb.onclick = function () { oeffneEditor('bearbeiten', r.id); };
+    unten.appendChild(bearb);
+    var loesch = mk('button', 'secondary danger', 'Rezept löschen');
+    loesch.onclick = function () {
+      if (!confirm('Rezept „' + r.title + '" samt Rezeptkarte endgültig löschen?')) return;
+      loesch.disabled = true;
+      call('deleteRecipe', r.id).then(function (s) {
+        rezeptAnsicht = { modus: 'liste', id: null };
+        setState(s);
+        toast('Rezept gelöscht');
+      }).catch(function (err) { loesch.disabled = false; alert(fehlerText(err)); });
+    };
+    unten.appendChild(loesch);
+    host.appendChild(unten);
+  }
+
+  function oeffneRezept(id) {
+    rezeptAnsicht = { modus: 'detail', id: id };
+    renderRezepte();
+    window.scrollTo(0, 0);
+  }
+
+  function zeigeRezeptListe() {
+    rezeptAnsicht = { modus: 'liste', id: null };
+    renderRezepte();
+  }
+
+  function zutatenAufListe(r) {
+    var abwahl = rezeptAbwahl[r.id] || {};
+    var auswahl = r.ingredients.filter(function (_, i) { return !abwahl[i]; });
+    if (!auswahl.length) return;
+    rezeptListeBusy[r.id] = true;
+    renderRezepte();
+    call('addRecipeToList', r.id, auswahl).then(function (s) {
+      delete rezeptListeBusy[r.id];
+      delete rezeptAbwahl[r.id];
+      setState(s);
+      toast(auswahl.length + (auswahl.length === 1 ? ' Zutat' : ' Zutaten') + ' auf die Einkaufsliste gesetzt', 2600);
+    }).catch(function (err) {
+      delete rezeptListeBusy[r.id];
+      renderRezepte();
+      alert('Konnte die Zutaten nicht eintragen: ' + fehlerText(err));
+    });
+  }
+
+  // ---- Editor (neu / Text bearbeiten) ----
+  function oeffneEditor(modus, id) {
+    rezeptAnsicht = { modus: modus, id: id || null };
+    letzteRezeptSignatur = '';
+    document.getElementById('rezeptKopf').hidden = true;
+    document.getElementById('rezeptSucheWrap').hidden = true;
+    var host = document.getElementById('rezeptHost');
+    host.innerHTML = '';
+    var r = id ? findeRezept(id) : null;
+    var katWahl = {}; // normName(Zutat) -> gewählte Kategorie
+
+    var abbr = mk('button', 'link-btn', '← Abbrechen');
+    abbr.onclick = schliesseEditor;
+    host.appendChild(abbr);
+
+    var card = mk('div', 'card');
+    var head = mk('div', 'card-head');
+    head.appendChild(mk('h3', null, modus === 'neu' ? 'Neues Rezept' : 'Rezept bearbeiten'));
+    card.appendChild(head);
+    var body = mk('div', 'editor-body');
+    if (modus === 'neu') {
+      body.appendChild(mk('p', 'hinweis',
+        'Am schnellsten: Rezeptkarte (Vorder- und Rückseite) im Claude-Chat an Claude schicken. ' +
+        'Du bekommst einen Text zurück — den hier einfügen und unten die Fotos der Karte auswählen.'));
+    }
+    var ta = mk('textarea', 'rezept-text');
+    ta.placeholder = REZEPT_BEISPIEL;
+    ta.value = r ? rezeptZuText(r) : '';
+    body.appendChild(ta);
+
+    var input = null;
+    var dateiInfo = null;
+    if (modus === 'neu') {
+      body.appendChild(mk('div', 'vorschau-titel', 'Rezeptkarte (Fotos oder PDF)'));
+      input = mk('input');
+      input.type = 'file';
+      input.accept = 'image/*,application/pdf';
+      input.multiple = true;
+      body.appendChild(input);
+      dateiInfo = mk('div', 'status-text');
+      body.appendChild(dateiInfo);
+      input.onchange = function () {
+        var n = input.files ? input.files.length : 0;
+        dateiInfo.textContent = n ? n + (n === 1 ? ' Datei ausgewählt' : ' Dateien ausgewählt') : '';
+      };
+    }
+    var fehler = mk('div', 'fehler');
+    body.appendChild(fehler);
+    var vorschau = mk('div');
+    body.appendChild(vorschau);
+    card.appendChild(body);
+
+    var akt = mk('div', 'aktionen');
+    var speichern = mk('button', 'primary', 'Speichern');
+    akt.appendChild(speichern);
+    card.appendChild(akt);
+    host.appendChild(card);
+
+    function kategorieFuer(ing) {
+      return katWahl[normName(ing.name)] || vorgeschlageneKategorie(ing);
+    }
+
+    // Live-Vorschau: zeigt, was erkannt wurde, und lässt pro Zutat die
+    // Kategorie korrigieren (bestimmt, wo sie auf der Einkaufsliste landet).
+    function zeigeVorschau() {
+      var p = parseRezeptText(ta.value);
+      vorschau.innerHTML = '';
+      if (!ta.value.trim()) return;
+      vorschau.appendChild(mk('div', 'vorschau-titel', p.title || '(kein Titel erkannt)'));
+      vorschau.appendChild(mk('div', 'status-text',
+        p.ingredients.length + (p.ingredients.length === 1 ? ' Zutat' : ' Zutaten') + ' · ' +
+        p.steps.length + (p.steps.length === 1 ? ' Kochschritt' : ' Kochschritte') + ' erkannt'));
+      p.ingredients.forEach(function (ing) {
+        var z = mk('div', 'vorschau-zutat');
+        var n = mk('span', 'vz-name', ing.name);
+        if (ing.amount) { n.appendChild(document.createTextNode(' ')); n.appendChild(mk('small', null, ing.amount)); }
+        z.appendChild(n);
+        var sel = mk('select');
+        state.config.categories.forEach(function (c) {
+          var o = mk('option', null, c);
+          o.value = c;
+          sel.appendChild(o);
+        });
+        sel.value = kategorieFuer(ing);
+        sel.onchange = function () { katWahl[normName(ing.name)] = sel.value; };
+        z.appendChild(sel);
+        vorschau.appendChild(z);
+      });
+    }
+    ta.oninput = zeigeVorschau;
+    zeigeVorschau();
+
+    speichern.onclick = function () {
+      var p = parseRezeptText(ta.value);
+      fehler.textContent = '';
+      if (!p.title) { fehler.textContent = 'Kein Titel erkannt — erste Zeile „Titel: …".'; return; }
+      if (!p.ingredients.length) {
+        fehler.textContent = 'Keine Zutaten erkannt — unter „Zutaten:" eine Zutat pro Zeile, z. B. „- Zwiebel | 1 Stück".';
+        return;
+      }
+      p.ingredients.forEach(function (ing) { ing.category = kategorieFuer(ing); });
+      var dateien = input && input.files ? Array.prototype.slice.call(input.files) : [];
+      speichern.disabled = true;
+      speichern.textContent = 'Wird gespeichert …';
+      var neueId = modus === 'neu' ? 'r-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) : id;
+      var anfrage = modus === 'neu'
+        ? call('addRecipe', { id: neueId, title: p.title, info: p.info, ingredients: p.ingredients, steps: p.steps })
+        : call('updateRecipe', id, { title: p.title, info: p.info, ingredients: p.ingredients, steps: p.steps });
+      anfrage.then(function (s) {
+        rezeptAnsicht = { modus: 'detail', id: neueId };
+        letzteRezeptSignatur = '';
+        setState(s);
+        window.scrollTo(0, 0);
+        toast('Rezept gespeichert');
+        return dateienHochladen(neueId, dateien);
+      }).catch(function (err) {
+        speichern.disabled = false;
+        speichern.textContent = 'Speichern';
+        fehler.textContent = 'Speichern fehlgeschlagen: ' + fehlerText(err);
+      });
+    };
+    ta.focus();
+  }
+
+  function schliesseEditor() {
+    var id = rezeptAnsicht.id;
+    rezeptAnsicht = id && findeRezept(id) ? { modus: 'detail', id: id } : { modus: 'liste', id: null };
+    letzteRezeptSignatur = '';
+    renderRezepte();
+  }
+
+  document.getElementById('neuesRezept').onclick = function () { oeffneEditor('neu'); };
+  document.getElementById('rezeptSuche').oninput = function (e) {
+    rezeptSuchbegriff = e.target.value;
+    renderRezepte();
+  };
+  document.getElementById('rezeptDateiInput').onchange = function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    e.target.value = '';
+    if (dateiZielRezept && files.length) dateienHochladen(dateiZielRezept, files);
+  };
+
   function render() {
     renderStoreSwitch();
     fillCategorySelect(document.getElementById('addListeCategory'));
@@ -1479,6 +2146,7 @@
     renderDubletten();
     renderAuswertung();
     renderEinstellungen();
+    renderRezepte();
   }
 
   // ---- Events ----
@@ -1523,6 +2191,9 @@
   // den ähnlichen Eintrag hingewiesen ("Doppelte suchen" räumt auf).
   function artikelAnlegenOderVerwenden(name, cat, aufListe, okMsg) {
     var vorhanden = findeGleichnamigen(name);
+    // Eine Rezept-Zutat auf der Liste ist kein Vorschlag: beim Anlegen eines
+    // Vorschlags mit gleichem Namen trotzdem einen normalen Artikel anlegen.
+    if (vorhanden && istRezeptZutat(vorhanden) && !aufListe) vorhanden = null;
     if (vorhanden) {
       var anders = vorhanden.category !== cat;
       if (aufListe && !vorhanden.active) {
