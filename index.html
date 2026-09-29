@@ -336,6 +336,17 @@
   .vorschau-zutat select { flex: 1 1 160px; min-width: 0; }
   .vorschau-titel { font-weight: 600; font-size: 0.95rem; }
   .rezept-unten { display: flex; gap: 8px; flex-wrap: wrap; }
+  /* Vorschaubilder in der Rezept-Übersicht */
+  .rk-links { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .rk-thumb {
+    width: 56px; height: 56px; border-radius: 8px; flex-shrink: 0; overflow: hidden;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Fraunces", Georgia, serif; font-size: 1.35rem; font-weight: 600;
+  }
+  .rk-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb-marke { color: var(--accent); font-size: 0.78rem; }
+
   /* Vollbild-Ansicht für Rezeptkarten */
   .datei-box img { cursor: zoom-in; }
   .lightbox {
@@ -1772,10 +1783,102 @@
       for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
       var blob = new Blob([arr], { type: d.mimeType || f.mimeType });
       dateiCache[f.id] = { url: URL.createObjectURL(blob), mimeType: blob.type };
+      var rz = findeRezept(rezeptId);
+      if (rz && !rz.thumbKey && /^image\//.test(blob.type)) {
+        var erstesBild = rz.files.filter(function (x) { return /^image\//.test(x.mimeType); })[0];
+        if (erstesBild && erstesBild.id === f.id) thumbSetzen(rz, dateiCache[f.id].url, false);
+      }
       renderRezepte();
     }).catch(function (err) {
       dateiCache[f.id] = { fehler: fehlerText(err) };
       renderRezepte();
+    });
+  }
+
+
+  // ---- Vorschaubilder für die Übersicht ----
+  // Winzige 144×144-JPEGs (~5 KB) im Sheet. getState() liefert nur eine
+  // Versionskennung (thumbKey); die Bilder selbst kommen gesammelt in EINER
+  // Anfrage und werden auf dem Gerät gespeichert — ab dem zweiten Öffnen
+  // erscheinen sie ohne jede Anfrage.
+  var THUMB_SPEICHER = 'einkaufsliste-rezept-thumbs-v1';
+  var thumbCache = {};        // rezeptId -> { key, url }
+  var thumbsLaden = false;
+  var thumbInArbeit = {};     // rezeptId -> true, solange eines erzeugt wird
+  try { thumbCache = JSON.parse(localStorage.getItem(THUMB_SPEICHER) || '{}') || {}; } catch (err) { thumbCache = {}; }
+
+  function thumbsSpeichern() {
+    try {
+      var ids = {};
+      rezepte().forEach(function (r) { ids[r.id] = true; });
+      Object.keys(thumbCache).forEach(function (id) { if (!ids[id]) delete thumbCache[id]; });
+      localStorage.setItem(THUMB_SPEICHER, JSON.stringify(thumbCache));
+    } catch (err) { /* privater Modus o. ä. — dann eben nur im Speicher */ }
+  }
+
+  function thumbUrl(r) {
+    var t = thumbCache[r.id];
+    return t && r.thumbKey && t.key === r.thumbKey ? t.url : null;
+  }
+
+  function fehlendeThumbsLaden() {
+    if (thumbsLaden) return;
+    var fehlend = rezepte().filter(function (r) { return r.thumbKey && !thumbUrl(r); })
+      .map(function (r) { return r.id; });
+    if (!fehlend.length) return;
+    thumbsLaden = true;
+    rpcDirekt('getRecipeThumbs', [fehlend]).then(function (res) {
+      thumbsLaden = false;
+      Object.keys(res || {}).forEach(function (id) {
+        if (res[id] && res[id].data) thumbCache[id] = { key: res[id].key, url: 'data:image/jpeg;base64,' + res[id].data };
+      });
+      thumbsSpeichern();
+      renderRezepte();
+    }).catch(function (err) {
+      thumbsLaden = false;
+      console.warn('Vorschaubilder nicht geladen:', err);
+    });
+  }
+
+  // Quadratischen Ausschnitt aus der Bildmitte auf 144×144 verkleinern
+  function erzeugeThumb(url) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var S = 144;
+        // etwas enger als das volle Quadrat: Tischrand und Kartenränder fallen weg,
+        // das Gericht in der Kartenmitte wird im kleinen Bild größer
+        var seite = Math.round(Math.min(img.naturalWidth, img.naturalHeight) * 0.78);
+        var c = document.createElement('canvas');
+        c.width = S; c.height = S;
+        c.getContext('2d').drawImage(img, (img.naturalWidth - seite) / 2, (img.naturalHeight - seite) / 2, seite, seite, 0, 0, S, S);
+        resolve(c.toDataURL('image/jpeg', 0.72).split(',')[1]);
+      };
+      img.onerror = function () { reject(new Error('Vorschaubild konnte nicht erstellt werden.')); };
+      img.src = url;
+    });
+  }
+
+  function thumbSetzen(r, bildUrl, manuell) {
+    if (thumbInArbeit[r.id]) return;
+    thumbInArbeit[r.id] = true;
+    var daten;
+    erzeugeThumb(bildUrl).then(function (b64) {
+      daten = b64;
+      return call('setRecipeThumb', r.id, b64);
+    }).then(function (s) {
+      delete thumbInArbeit[r.id];
+      var neu = (s.recipes || []).filter(function (x) { return x.id === r.id; })[0];
+      if (neu && neu.thumbKey) {
+        thumbCache[r.id] = { key: neu.thumbKey, url: 'data:image/jpeg;base64,' + daten };
+        thumbsSpeichern();
+      }
+      setState(s);
+      if (manuell) toast('Vorschaubild gesetzt');
+    }).catch(function (err) {
+      delete thumbInArbeit[r.id];
+      if (manuell) alert(fehlerText(err));
+      else console.warn('Vorschaubild:', err);
     });
   }
 
@@ -1807,13 +1910,14 @@
     // Nur neu zeichnen, wenn sich etwas Sichtbares geändert hat — sonst
     // flackern Bilder und die Scrollposition springt bei jedem Polling.
     var sig = JSON.stringify(modus === 'liste'
-      ? ['liste', rezepte(), rezeptSuchbegriff]
+      ? ['liste', rezepte(), rezeptSuchbegriff, rezepte().map(function (x) { return thumbUrl(x) ? 1 : 0; })]
       : ['detail', r, offeneNamen(), rezeptAbwahl[r.id] || {}, !!rezeptListeBusy[r.id], rezeptUpload[r.id] || '', dateiCacheSignatur(r), state.config.categories]);
-    if (sig === letzteRezeptSignatur) return;
+    if (sig === letzteRezeptSignatur) { if (modus === 'liste') fehlendeThumbsLaden(); return; }
     letzteRezeptSignatur = sig;
     host.innerHTML = '';
     if (modus === 'liste') renderRezeptListe(host);
     else renderRezeptDetail(host, r);
+    if (modus === 'liste') fehlendeThumbsLaden();
   }
 
   function renderRezeptListe(host) {
@@ -1834,13 +1938,25 @@
     } else {
       liste.forEach(function (r) {
         var zeile = mk('div', 'rezept-karte');
+        var aussen = mk('div', 'rk-links');
+        var th = mk('div', 'rk-thumb');
+        var u = thumbUrl(r);
+        if (u) {
+          var ti = mk('img');
+          ti.src = u; ti.alt = ''; ti.width = 56; ti.height = 56;
+          th.appendChild(ti);
+        } else {
+          th.textContent = (r.title || '?').charAt(0).toUpperCase();
+        }
+        aussen.appendChild(th);
         var links = mk('div');
+        aussen.appendChild(links);
         links.appendChild(mk('div', 'rk-titel', r.title));
         var meta = [r.ingredients.length + (r.ingredients.length === 1 ? ' Zutat' : ' Zutaten')];
         if (r.info) meta.push(r.info);
         if (r.files.length) meta.push(r.files.length === 1 ? 'Rezeptkarte' : r.files.length + ' Dateien');
         links.appendChild(mk('div', 'rk-meta', meta.join(' · ')));
-        zeile.appendChild(links);
+        zeile.appendChild(aussen);
         zeile.appendChild(mk('span', 'rk-pfeil', '›'));
         zeile.onclick = function () { oeffneRezept(r.id); };
         card.appendChild(zeile);
@@ -1949,6 +2065,13 @@
       }
       var fz = mk('div', 'datei-zeile');
       fz.appendChild(mk('span', null, f.name));
+      if (c.url && /^image\//.test(c.mimeType)) {
+        var vb = mk('button', 'link-btn', 'Als Vorschaubild');
+        vb.style.fontSize = '0.8rem';
+        vb.style.whiteSpace = 'nowrap';
+        vb.onclick = function () { thumbSetzen(r, c.url, true); };
+        fz.appendChild(vb);
+      }
       var del = mk('button', 'row-btn', '✕ entfernen');
       del.onclick = function () {
         if (!confirm('Datei „' + f.name + '" aus dem Rezept entfernen?')) return;
