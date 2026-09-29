@@ -336,6 +336,31 @@
   .vorschau-zutat select { flex: 1 1 160px; min-width: 0; }
   .vorschau-titel { font-weight: 600; font-size: 0.95rem; }
   .rezept-unten { display: flex; gap: 8px; flex-wrap: wrap; }
+  /* Vollbild-Ansicht für Rezeptkarten */
+  .datei-box img { cursor: zoom-in; }
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1000; background: #000;
+    display: flex; flex-direction: column;
+  }
+  .lightbox-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 14px; padding-top: max(10px, env(safe-area-inset-top));
+    color: #fff; font-size: 0.85rem;
+  }
+  .lightbox-bar .lb-steuer { display: flex; gap: 8px; align-items: center; }
+  .lightbox-bar button {
+    background: rgba(255, 255, 255, 0.16); color: #fff; border: none; border-radius: 999px;
+    padding: 8px 14px; font-family: inherit; font-size: 0.9rem; cursor: pointer; min-width: 40px;
+  }
+  .lightbox-bar button:disabled { opacity: 0.35; cursor: default; }
+  .lb-hinweis { color: rgba(255, 255, 255, 0.6); font-size: 0.75rem; }
+  .lightbox-bild { flex: 1; overflow: auto; display: flex; -webkit-overflow-scrolling: touch; }
+  .lightbox-bild img {
+    margin: auto; display: block; max-width: 100%; max-height: 100%;
+    object-fit: contain; cursor: zoom-in;
+  }
+  .lightbox-bild.gross img { max-width: none; max-height: none; cursor: zoom-out; }
+
 
 
   table.eval-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
@@ -1905,6 +1930,17 @@
         var img = mk('img');
         img.src = c.url;
         img.alt = f.name;
+        img.title = 'Antippen für Vollbild';
+        img.onclick = function () {
+          // alle fertig geladenen Bilder dieses Rezepts, zum Blättern
+          var bilder = r.files.filter(function (x) {
+            var cx = dateiCache[x.id];
+            return cx && cx.url && /^image\//.test(cx.mimeType);
+          }).map(function (x) { return { id: x.id, url: dateiCache[x.id].url, name: x.name }; });
+          var start = 0;
+          bilder.forEach(function (b, n) { if (b.id === f.id) start = n; });
+          oeffneBild(bilder, start);
+        };
         box.appendChild(img);
       } else {
         var a = mk('a', 'secondary', 'PDF öffnen');
@@ -2125,6 +2161,108 @@
     letzteRezeptSignatur = '';
     renderRezepte();
   }
+
+  // ---- Vollbild-Ansicht für Rezeptkarten ----
+  // Liegt direkt am <body>, außerhalb des neu gezeichneten Rezept-Bereichs —
+  // Hintergrund-Aktualisierungen schließen sie also nicht.
+  var lbHistorie = false;
+
+  function oeffneBild(bilder, start) {
+    schliesseBild(true);
+    var i = start || 0;
+    var box = mk('div', 'lightbox');
+    box.id = 'lightbox';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+
+    var bar = mk('div', 'lightbox-bar');
+    var links = mk('div');
+    var titel = mk('div');
+    links.appendChild(titel);
+    links.appendChild(mk('div', 'lb-hinweis', 'Bild antippen zum Vergrößern'));
+    bar.appendChild(links);
+    var steuer = mk('div', 'lb-steuer');
+    var zurueck = null, weiter = null;
+    if (bilder.length > 1) {
+      zurueck = mk('button', null, '‹');
+      zurueck.setAttribute('aria-label', 'Vorheriges Bild');
+      zurueck.onclick = function () { if (i > 0) { i--; zeige(); } };
+      weiter = mk('button', null, '›');
+      weiter.setAttribute('aria-label', 'Nächstes Bild');
+      weiter.onclick = function () { if (i < bilder.length - 1) { i++; zeige(); } };
+      steuer.appendChild(zurueck);
+      steuer.appendChild(weiter);
+    }
+    var zu = mk('button', null, '✕');
+    zu.setAttribute('aria-label', 'Schließen');
+    zu.onclick = function () { schliesseBild(); };
+    steuer.appendChild(zu);
+    bar.appendChild(steuer);
+    box.appendChild(bar);
+
+    var flaeche = mk('div', 'lightbox-bild');
+    var img = mk('img');
+    flaeche.appendChild(img);
+    box.appendChild(flaeche);
+
+    function zeige() {
+      flaeche.classList.remove('gross');
+      img.src = bilder[i].url;
+      img.alt = bilder[i].name || '';
+      titel.textContent = bilder.length > 1 ? 'Bild ' + (i + 1) + ' von ' + bilder.length : (bilder[i].name || '');
+      if (zurueck) { zurueck.disabled = i === 0; weiter.disabled = i === bilder.length - 1; }
+      flaeche.scrollTop = 0; flaeche.scrollLeft = 0;
+    }
+
+    // Antippen: zwischen "ganz sichtbar" und "volle Auflösung" wechseln; beim
+    // Vergrößern wird die angetippte Stelle in die Mitte gescrollt.
+    img.onclick = function (e) {
+      e.stopPropagation();
+      var rect = img.getBoundingClientRect();
+      var rx = (e.clientX - rect.left) / rect.width;
+      var ry = (e.clientY - rect.top) / rect.height;
+      var gross = !flaeche.classList.contains('gross');
+      flaeche.classList.toggle('gross', gross);
+      if (gross) {
+        flaeche.scrollLeft = rx * img.offsetWidth - flaeche.clientWidth / 2;
+        flaeche.scrollTop = ry * img.offsetHeight - flaeche.clientHeight / 2;
+      }
+    };
+    // Tippen auf den dunklen Rand schließt (nicht im vergrößerten Modus)
+    flaeche.onclick = function (e) {
+      if (e.target === flaeche && !flaeche.classList.contains('gross')) schliesseBild();
+    };
+
+    document.body.appendChild(box);
+    document.body.style.overflow = 'hidden';
+    zeige();
+    // Zurück-Taste am Handy soll das Bild schließen, nicht die App verlassen
+    try { history.pushState({ lightbox: true }, ''); lbHistorie = true; } catch (err) { lbHistorie = false; }
+  }
+
+  function schliesseBild(ausHistorie) {
+    var box = document.getElementById('lightbox');
+    if (!box) return;
+    box.parentNode.removeChild(box);
+    document.body.style.overflow = '';
+    if (lbHistorie && !ausHistorie) {
+      lbHistorie = false;
+      try { history.back(); } catch (err) {}
+    }
+  }
+
+  window.addEventListener('popstate', function () {
+    if (document.getElementById('lightbox')) { lbHistorie = false; schliesseBild(true); }
+  });
+  document.addEventListener('keydown', function (e) {
+    var box = document.getElementById('lightbox');
+    if (!box) return;
+    if (e.key === 'Escape') schliesseBild();
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      var btn = box.querySelectorAll('.lb-steuer button')[e.key === 'ArrowLeft' ? 0 : 1];
+      if (btn && btn.textContent !== '✕' && !btn.disabled) btn.click();
+    }
+  });
 
   document.getElementById('neuesRezept').onclick = function () { oeffneEditor('neu'); };
   document.getElementById('rezeptSuche').oninput = function (e) {
