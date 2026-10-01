@@ -10,38 +10,43 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #faf9f6;
-    --surface: #ffffff;
-    --ink: #2b2a28;
-    --muted: #736e63;
-    --line: #e6e2d8;
-    --accent: #3f7d58;
+    --bg: #f7faf7;          /* Seitenhintergrund, Hauch Grün */
+    --surface: #ffffff;     /* Karten */
+    --ink: #19211c;         /* Text */
+    --muted: #66706a;       /* Nebentext */
+    --line: #e3ece6;        /* feine Ränder und Trennlinien */
+    --accent: #3f7d58;      /* kräftiges Grün: Plus-Knopf, Häkchen, aktive Elemente */
     --accent-ink: #ffffff;
-    --accent-soft: #e7f1ea;
-    --danger: #a44236;
-    --danger-soft: #f6e9e6;
-    --radius: 10px;
-    --shadow: 0 1px 2px rgba(30, 26, 14, 0.06);
+    --accent-soft: #edf6f0; /* sehr helles Grün: Markierungen */
+    --danger: #a1173f;
+    --danger-soft: #fde4ec;
+    --radius: 18px;
+    --shadow: 0 1px 2px rgba(20, 30, 24, 0.05);
+    --pastel: #d5eedd;      /* Hauptknöpfe */
+    --pastel-ink: #1f4a31;  /* Schrift auf Pastell */
+    --flaeche: #eef5f0;     /* Eingabefelder, Nebenknöpfe, Segment-Leisten */
+    --kreis: #c6d3ca;       /* Rand des Abhak-Kreises */
+    --pfeil-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366706a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #1a1917;
-      --surface: #232120;
-      --ink: #eeece5;
-      --muted: #a49d8e;
-      --line: #38352e;
-      --accent: #74c393;
-      --accent-ink: #16261c;
-      --accent-soft: #24352a;
-      --danger: #e0897a;
-      --danger-soft: #3a2622;
+      --bg: #151916; --surface: #1d231f; --ink: #e8efe9; --muted: #9aa59e; --line: #2c352f;
+      --accent: #8fd1a8; --accent-ink: #12261a; --accent-soft: #24352a;
+      --danger: #f19bb0; --danger-soft: #3a2228;
+      --pastel: #2a3a30; --pastel-ink: #cfeedd; --flaeche: #232b25; --kreis: #4a574f;
       --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+      --pfeil-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa59e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151916; --surface: #1d231f; --ink: #e8efe9; --muted: #9aa59e; --line: #2c352f;
+    --accent: #8fd1a8; --accent-ink: #12261a; --accent-soft: #24352a;
+    --danger: #f19bb0; --danger-soft: #3a2228;
+    --pastel: #2a3a30; --pastel-ink: #cfeedd; --flaeche: #232b25; --kreis: #4a574f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --pfeil-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa59e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   }
   * { box-sizing: border-box; }
   html, body {
@@ -423,26 +428,302 @@
     transition: opacity 0.2s ease;
   }
   .toast.show { opacity: 1; }
+
+  /* =====================================================================
+     Designsprache (abgestimmt auf die Medikamenten-App): nüchtern, viel
+     Weißraum, runde Formen, pastelliges Grün. Steht bewusst am Ende, damit
+     es die älteren Regeln oben überstimmt — Klassen/IDs, die das JavaScript
+     nutzt, sind unverändert.
+     ===================================================================== */
+  @font-face { font-family: 'Open Sans App'; src: url('OpenSans-Light.ttf') format('truetype'); font-weight: 300; font-display: swap; }
+  @font-face { font-family: 'Open Sans App'; src: url('OpenSans-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'Open Sans App'; src: url('OpenSans-SemiBold.ttf') format('truetype'); font-weight: 600; font-display: swap; }
+  @font-face { font-family: 'Open Sans App'; src: url('OpenSans-Bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+
+  html, body {
+    font-family: 'Segoe UI', 'Open Sans App', 'Open Sans', system-ui, -apple-system, sans-serif;
+    font-size: 16px; -webkit-font-smoothing: antialiased;
+  }
+  body { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+  h1, h2, h3 { font-family: inherit; text-wrap: balance; }
+  .num { font-family: inherit; font-variant-numeric: tabular-nums; }
+  .ik { width: 20px; height: 20px; flex: none; display: block; pointer-events: none; }
+  button svg, a svg { pointer-events: none; }
+
+  /* ---- Kopf ---- */
+  header.top {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+    max-width: 640px; margin: 0 auto;
+    padding: calc(36px + env(safe-area-inset-top)) 16px 14px;
+    background: transparent; border: 0;
+  }
+  header.top .title-row { display: block; max-width: none; margin: 0; min-width: 0; }
+  header.top h1 { margin: 2px 0 0; font-size: 36px; font-weight: 300; letter-spacing: -0.01em; line-height: 1.1; }
+  #subtitle { margin: 0; font-size: 14px; font-weight: 600; color: var(--muted); }
+
+  .rund {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+    display: inline-flex; align-items: center; justify-content: center; padding: 0; color: var(--ink);
+    cursor: pointer; flex: none;
+  }
+  .rund.aktiv { background: var(--pastel); border-color: var(--pastel); color: var(--pastel-ink); }
+
+  /* ---- Segment-Leisten: Tabs und Laden-Auswahl ---- */
+  .leisten { max-width: 640px; margin: 0 auto; padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+  nav.tabs {
+    display: flex; gap: 4px; padding: 4px; margin: 0; max-width: none;
+    background: var(--flaeche); border-radius: 999px; border: 0 !important; box-shadow: none;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  nav.tabs button {
+    flex: 1 0 auto; height: 38px; padding: 0 14px; margin: 0; border: 0; border-radius: 999px;
+    background: transparent; color: var(--muted); font: inherit; font-size: 15px; font-weight: 600;
+  }
+  nav.tabs button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+  .store-switch { display: flex; gap: 4px; padding: 4px; margin: 0; max-width: none; background: var(--flaeche); border: 0; border-radius: 999px; }
+  .store-switch button {
+    flex: 1 1 0; min-width: 0; height: 38px; padding: 0 12px; border: 0; border-radius: 999px;
+    background: transparent; color: var(--muted); font: inherit; font-size: 15px; font-weight: 600;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .store-switch button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+
+  main { max-width: 640px; padding: 16px 16px 24px; }
+  .panel { gap: 16px; }
+
+  /* ---- Karten ---- */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: none; padding: 16px; }
+  .card-head { padding: 0 0 8px; border-bottom: 0; gap: 10px; }
+  .card-head h3 { margin: 0; font-size: 22px; font-weight: 300; }
+  .empty-note { padding: 4px 0; font-size: 15px; line-height: 1.5; color: var(--muted); }
+  p.subtitle { font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .vorrat-kopf { align-items: flex-start; }
+
+  /* ---- Listenzeilen ---- */
+  ul.item-list li { min-height: 56px; padding: 8px 4px; gap: 12px; border-bottom: 1px solid var(--line); }
+  ul.item-list li:last-child { border-bottom: 0; }
+  .item-name { font-size: 16px; font-weight: 600; }
+  ul.item-list li.checked .item-name { font-weight: 400; }
+  .note-tag {
+    display: inline-block; margin-left: 8px; font-size: 12px; font-weight: 600; padding: 3px 10px;
+    border-radius: 999px; border: 0; background: var(--accent-soft); color: var(--pastel-ink); vertical-align: 1px;
+  }
+  .checkbox {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--kreis); background: var(--surface);
+    display: inline-flex; align-items: center; justify-content: center; flex: none; font-size: 0;
+  }
+  .checkbox.checked { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .checkbox .ik { width: 15px; height: 15px; stroke-width: 2.6; }
+
+  /* ---- Felder: gefüllt statt umrandet ---- */
+  input[type="text"], input[type="number"], input[type="date"], input[type="search"], select, textarea, .note-input, .store-name-input {
+    height: 48px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--flaeche);
+    font: inherit; font-size: 16px; color: var(--ink);
+  }
+  textarea, textarea.rezept-text { height: auto; min-height: 72px; padding: 12px 14px; border: 0; border-radius: 12px; background: var(--flaeche); line-height: 1.45; }
+  textarea.rezept-text { min-height: 240px; }
+  select { -webkit-appearance: none; appearance: none; background-image: var(--pfeil-select); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 40px; }
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
+  .note-input { height: 44px; border: 0; }
+  .vorrat-search-wrap { position: relative; padding: 0; }
+  .vorrat-search-wrap input[type="search"] { width: 100%; border: 0; border-radius: 999px; padding-left: 44px; background: var(--flaeche); }
+  .vorrat-search-wrap .lupe { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--muted); }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .checkbox:focus-visible, a:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  /* ---- Hinzufügen-Zeilen ---- */
+  form.add-row { padding: 0; background: transparent; border-top: 0; gap: 8px; }
+
+  /* ---- Knöpfe: Pillen ---- */
+  button.primary, button.secondary, button.danger, a.secondary, .link-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 44px; padding: 0 18px; border: 0; border-radius: 999px;
+    font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; text-decoration: none;
+  }
+  button.primary { background: var(--pastel); color: var(--pastel-ink); }
+  button.secondary, a.secondary, .link-btn { background: var(--flaeche); color: var(--ink); }
+  button.danger, button.secondary.danger { background: var(--danger-soft); color: var(--danger); }
+  button.primary:disabled, button.secondary:disabled { opacity: 0.5; cursor: default; }
+  .klein, .link-btn.klein { height: 36px; padding: 0 14px; font-size: 14px; }
+  .clear-bought-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--flaeche); color: var(--ink);
+    font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+  }
+  .clear-bought-btn:hover { border: 0; color: var(--ink); }
+  .row-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    height: 36px; min-width: 36px; padding: 0 8px; border: 0; border-radius: 999px;
+    background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .row-btn:hover { background: var(--danger-soft); color: var(--danger); }
+  .row-btn .ik { width: 16px; height: 16px; }
+
+  /* Schwebender Plus-Knopf (nur im Rezepte-Tab) */
+  .fab {
+    position: fixed; right: max(20px, calc(50% - 300px)); bottom: calc(26px + env(safe-area-inset-bottom)); z-index: 4;
+    width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink);
+    display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(63, 125, 88, 0.30);
+  }
+  .fab .ik { width: 28px; height: 28px; }
+
+  /* ---- Chips (Vorschläge) ---- */
+  .chip-wrap { padding: 4px 0 0; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface); font-size: 14px; font-weight: 600; color: var(--ink);
+  }
+  .chip:has(.x) { padding-right: 5px; }
+  .chip.on-list { background: var(--pastel); border-color: var(--pastel); color: var(--pastel-ink); }
+  .chip .x {
+    width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: transparent;
+    display: inline-flex; align-items: center; justify-content: center; color: inherit; opacity: 0.75; cursor: pointer;
+  }
+  .chip .x:hover { opacity: 1; background: var(--danger-soft); color: var(--danger); }
+  .chip .x .ik { width: 14px; height: 14px; }
+
+  .count-pill { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 0; background: var(--flaeche); color: var(--muted); white-space: nowrap; }
+
+  ul.dupe-list li { padding: 8px 4px; }
+  .dupe-entry { font-size: 15px; }
+  .dupe-cat { font-size: 13px; }
+
+  /* ---- Auswertung ---- */
+  .table-scroll { margin: 0 -8px; }
+  table.eval-table { font-size: 15px; }
+  table.eval-table th { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--line); padding: 8px; }
+  table.eval-table td { border-bottom: 1px solid var(--line); padding: 12px 8px; }
+  table.eval-table tr:last-child td { border-bottom: 0; }
+  .trend { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-left: 6px; white-space: nowrap; }
+  @media (max-width: 430px) {
+    table.eval-table { font-size: 14px; }
+    table.eval-table th, table.eval-table td { padding-left: 4px; padding-right: 4px; }
+    table.eval-table td:first-child { font-size: 13px; }
+    .table-scroll { margin: 0 -10px; }
+    table.eval-table td:last-child { padding: 0; width: 32px; }
+    table.eval-table .row-btn { min-width: 32px; padding: 0; }
+    td.price .trend { font-size: 11px; padding: 2px 7px; }
+  }
+  td.price .trend { display: table; margin: 4px 0 0 auto; }
+  td.price { white-space: nowrap; }
+  .trend.up { background: #fde4ec; color: #a1173f; }
+  .trend.down { background: #e1f5ea; color: #1d6b3f; }
+
+  /* ---- Einstellungen als gruppierte Listen ---- */
+  .grtitel { margin: 22px 4px 8px; font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  #panel-einstellungen > div:first-child .grtitel { margin-top: 4px; }
+  .gruppe { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .gruppe-hinweis { margin: 0; padding: 14px 16px 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .gruppe form.add-row { padding: 12px 16px; border-top: 1px solid var(--line); }
+  .order-list { padding: 0; margin: 0; }
+  .order-list li { min-height: 52px; padding: 8px 16px; font-size: 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .order-list li:last-child { border-bottom: 0; }
+  .order-list li.dragging { opacity: 0.85; background: var(--accent-soft); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
+  .drag-handle {
+    width: 30px; min-height: 44px; padding: 0; display: flex; align-items: center; justify-content: center;
+    color: #a3ada6; cursor: grab; touch-action: none; user-select: none; flex: none;
+  }
+  .drag-handle .griff { width: 12px; height: 18px; }
+  .order-buttons { gap: 6px; }
+  .order-buttons button {
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer;
+  }
+  .order-buttons button:hover { border-color: var(--line); background: var(--flaeche); color: var(--ink); }
+  .order-buttons button .ik { width: 16px; height: 16px; }
+  .settings-grid { gap: 0; }
+  .settings-grid > div + div { border-left: 1px solid var(--line); }
+  @media (max-width: 640px) { .settings-grid > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+  .store-name-input { display: block; width: calc(100% - 32px); margin: 12px 16px 4px; padding: 0 14px; }
+  .save-row { padding: 12px 16px; background: transparent; border-top: 1px solid var(--line); }
+
+  /* ---- Rezepte ---- */
+  .rezept-karte { padding: 10px 0; }
+  .rk-thumb { width: 56px; height: 56px; border-radius: 12px; background: var(--pastel); color: var(--pastel-ink); font-family: inherit; font-size: 22px; font-weight: 600; }
+  .rk-titel { font-size: 16px; font-weight: 600; }
+  .rk-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .rk-pfeil { color: var(--muted); }
+  .rk-pfeil .ik { width: 18px; height: 18px; }
+  #rezeptHost > .link-btn, #rezeptHost > div > .link-btn { align-self: flex-start; }
+  .rezept-titel { font-size: 25px; font-weight: 300; line-height: 1.2; margin-top: 14px; }
+  ul.zutaten-list li { min-height: 52px; padding: 8px 4px; gap: 12px; }
+  .z-name { font-size: 16px; font-weight: 600; }
+  ul.zutaten-list li.aus .z-name { font-weight: 400; }
+  .z-menge { font-size: 14px; color: var(--muted); }
+  .z-hinweis { display: table; margin-top: 4px; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: #e1f5ea; color: #1d6b3f; }
+  .aktionen { padding: 12px 0 0; border-top: 0; background: transparent; }
+  .datei-box { padding: 10px 0; }
+  .datei-box img { border-radius: 12px; }
+  .datei-zeile { font-size: 13px; gap: 6px; flex-wrap: wrap; }
+  ol.schritte { padding: 4px 0 0 22px; }
+  ol.schritte li { font-size: 16px; line-height: 1.5; padding: 5px 0; }
+  .editor-body { padding: 0; }
+  .vorschau-titel { font-weight: 600; font-size: 15px; }
+  .vorschau-zutat { font-size: 15px; }
+  .status-text { font-size: 14px; color: var(--muted); }
+
+  /* ---- Vollbild ---- */
+  .lightbox-bar button {
+    width: 44px; height: 44px; min-width: 0; padding: 0; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.18); color: #fff;
+  }
+
+  /* Kompaktere Kategorien (Wunsch Richard): Überschriften fett, Lebensmittel
+     in normaler Schrift, weniger Luft in den Karten und zwischen den Zeilen */
+  .panel { gap: 12px; }
+  .card { padding: 12px 16px; }
+  .card-head { padding: 0 0 2px; }
+  .card-head h3 { font-size: 17px; font-weight: 700; letter-spacing: 0; }
+  ul.item-list li { min-height: 44px; padding: 4px 2px; gap: 12px; }
+  .item-name, ul.item-list li.checked .item-name { font-weight: 400; }
+  .checkbox { width: 24px; height: 24px; }
+  ul.zutaten-list li { min-height: 44px; padding: 4px 2px; }
+  .z-name, ul.zutaten-list li.aus .z-name { font-weight: 400; }
+  .chip { font-weight: 400; }
+  .chip-wrap { padding-top: 6px; }
+
+  /* Schmale Handys: Tabs etwas kompakter, damit alle vier sichtbar sind */
+  @media (max-width: 430px) {
+    nav.tabs { gap: 2px; }
+    nav.tabs button { padding: 0 7px; font-size: 14px; }
+  }
+  /* Hinzufügen-Knopf als reine Plus-Pille, damit die Kategorie Platz hat */
+  #addListeForm button.primary, #addVorratForm button.primary { width: 56px; padding: 0; flex: 0 0 56px; }
+  #addListeForm button.primary span, #addVorratForm button.primary span { display: none; }
+  #addListeForm button.primary .ik, #addVorratForm button.primary .ik { width: 22px; height: 22px; }
+  #addCategoryForm button.primary { width: 56px; padding: 0; flex: 0 0 56px; }
+  #addCategoryForm input[type="text"] { flex: 1; min-width: 0; }
+
+  /* ---- Meldung unten ---- */
+  .toast {
+    left: 50%; transform: translateX(-50%); bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 20;
+    background: var(--ink); color: var(--surface); padding: 12px 18px; border-radius: 999px;
+    font-size: 14px; font-weight: 600; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); max-width: calc(100% - 32px); text-align: center;
+  }
 </style>
 </head>
 <body>
 
 <header class="top">
   <div class="title-row">
-    <div>
-      <h1>Einkaufsliste</h1>
-      <div class="subtitle" id="subtitle">wird geladen …</div>
-    </div>
+    <div class="subtitle" id="subtitle">wird geladen …</div>
+    <h1>Einkaufsliste</h1>
   </div>
-  <div class="store-switch" id="storeSwitch"></div>
+  <button class="rund" id="zahnrad" type="button" title="Einstellungen" aria-label="Einstellungen" aria-pressed="false"><svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</header>
+<div class="leisten">
   <nav class="tabs">
     <button data-tab="liste" class="active">Liste</button>
     <button data-tab="vorrat">Vorschläge</button>
     <button data-tab="rezepte">Rezepte</button>
     <button data-tab="auswertung">Auswertung</button>
-    <button data-tab="einstellungen" title="Einstellungen" aria-label="Einstellungen" style="font-size:1.05rem; line-height:1;">⚙︎</button>
+    <button data-tab="einstellungen" hidden>Einstellungen</button>
   </nav>
-</header>
+  <div class="store-switch" id="storeSwitch"></div>
+</div>
 
 <main>
 
@@ -452,7 +733,7 @@
       <form class="add-row" id="addListeForm">
         <input type="text" id="addListeName" placeholder="Artikel hinzufügen …" required>
         <select id="addListeCategory"></select>
-        <button class="primary" type="submit">+</button>
+        <button class="primary" type="submit" aria-label="Artikel hinzufügen"><svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Hinzufügen</span></button>
       </form>
     </div>
   </section>
@@ -463,6 +744,7 @@
       <button class="clear-bought-btn" id="findDupes">Doppelte suchen</button>
     </div>
     <div class="vorrat-search-wrap">
+      <svg class="ik lupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
       <input type="search" id="vorratSearch" placeholder="Vorschläge durchsuchen …">
     </div>
     <div id="dupResults"></div>
@@ -471,7 +753,7 @@
       <form class="add-row" id="addVorratForm">
         <input type="text" id="addVorratName" placeholder="Neuen Artikel zu Vorschlägen hinzufügen …" required>
         <select id="addVorratCategory"></select>
-        <button class="primary" type="submit">+</button>
+        <button class="primary" type="submit" aria-label="Zu Vorschlägen hinzufügen"><svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Hinzufügen</span></button>
       </form>
     </div>
   </section>
@@ -479,9 +761,10 @@
   <section class="panel" id="panel-rezepte">
     <div class="vorrat-kopf" id="rezeptKopf">
       <p class="subtitle" style="margin:0;">Eure gesammelten Rezepte. Rezept öffnen, Zutaten auswählen, auf die Einkaufsliste setzen.</p>
-      <button class="clear-bought-btn" id="neuesRezept">+ Rezept</button>
+      <button class="fab" id="neuesRezept" type="button" aria-label="Neues Rezept" title="Neues Rezept"><svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
     <div class="vorrat-search-wrap" id="rezeptSucheWrap">
+      <svg class="ik lupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
       <input type="search" id="rezeptSuche" placeholder="Rezept oder Zutat suchen …">
     </div>
     <div id="rezeptHost" style="display:flex; flex-direction:column; gap:18px;"></div>
@@ -514,36 +797,35 @@
   </section>
 
   <section class="panel" id="panel-einstellungen">
-    <div class="card">
-      <div class="card-head"><h3>Kategorien</h3></div>
-      <p class="empty-note" style="padding-top:0;">
-        Per <strong>⠿</strong> ziehen und verschieben, um die Reihenfolge zu ändern — wird sofort gespeichert. Reihenfolge hier = "Standard"-Laden. Umbenennen ändert die Kategorie überall (auch bei bestehenden Artikeln), Löschen verschiebt betroffene Artikel nach „Sonstiges".
-      </p>
-      <ul class="order-list" id="categoryList"></ul>
-      <form class="add-row" id="addCategoryForm">
-        <input type="text" id="newCategoryName" placeholder="Neue Kategorie …" required>
-        <button class="primary" type="submit">+</button>
-      </form>
+    <div>
+      <div class="grtitel">Kategorien</div>
+      <div class="gruppe">
+        <p class="gruppe-hinweis">Am Griff links ziehen, um die Reihenfolge zu ändern — wird sofort gespeichert. Diese Reihenfolge gilt für den Laden „Standard". Umbenennen ändert die Kategorie überall (auch bei bestehenden Artikeln), Löschen verschiebt betroffene Artikel nach „Sonstiges".</p>
+        <ul class="order-list" id="categoryList"></ul>
+        <form class="add-row" id="addCategoryForm">
+          <input type="text" id="newCategoryName" placeholder="Neue Kategorie …" required>
+          <button class="primary" type="submit" aria-label="Kategorie anlegen"><svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </form>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-head"><h3>Läden & Reihenfolge</h3></div>
-      <p class="empty-note" style="padding-top:0;">
-        Lege die Namen eurer beiden Stammläden fest und ordne die Kategorien per Ziehen (⠿) in der Reihenfolge, wie ihr sie beim Einkaufen durchlauft — die Reihenfolge wird sofort gespeichert.
-        "Standard" ist ein dritter, unabhängiger Laden mit fester, normierter Reihenfolge und lässt sich nicht ändern.
-      </p>
-      <div class="settings-grid">
-        <div>
-          <input type="text" class="store-name-input" id="s1Name" placeholder="Name Laden 1">
-          <ul class="order-list" id="s1Order"></ul>
+    <div>
+      <div class="grtitel">Läden &amp; Reihenfolge</div>
+      <div class="gruppe">
+        <p class="gruppe-hinweis">Namen eurer beiden Stammläden festlegen und die Kategorien am Griff in die Reihenfolge ziehen, in der ihr sie beim Einkaufen durchlauft — wird sofort gespeichert. „Standard" ist ein dritter Laden mit fester Reihenfolge (siehe oben).</p>
+        <div class="settings-grid">
+          <div>
+            <input type="text" class="store-name-input" id="s1Name" placeholder="Name Laden 1">
+            <ul class="order-list" id="s1Order"></ul>
+          </div>
+          <div>
+            <input type="text" class="store-name-input" id="s2Name" placeholder="Name Laden 2">
+            <ul class="order-list" id="s2Order"></ul>
+          </div>
         </div>
-        <div>
-          <input type="text" class="store-name-input" id="s2Name" placeholder="Name Laden 2">
-          <ul class="order-list" id="s2Order"></ul>
+        <div class="save-row">
+          <button class="primary" id="saveConfig">Namen speichern</button>
         </div>
-      </div>
-      <div class="save-row">
-        <button class="primary" id="saveConfig">Namen speichern</button>
       </div>
     </div>
   </section>
@@ -641,6 +923,30 @@
     return fetch(API_URL, { method: 'POST', body: JSON.stringify({ rpc: fn, args: args }) })
       .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
       .then(function (data) { if (!data.ok) throw new Error(data.error || 'Serverfehler'); return data.state; });
+  }
+
+  // ---- Linien-Symbole (statt Sonderzeichen wie ✓ ✕ ⠿ ⚙) ----
+  var IKON_PFADE = {
+    haken: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    schliessen: '<path d="M6 6l12 12M18 6L6 18"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    links: '<path d="M15 6l-6 6 6 6"/>',
+    rechts: '<path d="M9 6l6 6-6 6"/>',
+    stift: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/>'
+  };
+  function ikon(name) {
+    if (name === 'griff') {
+      return '<svg class="ik griff" viewBox="0 0 12 18" fill="currentColor" aria-hidden="true">' +
+        '<circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/><circle cx="3" cy="9" r="1.6"/>' +
+        '<circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg>';
+    }
+    return '<svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IKON_PFADE[name] + '</svg>';
+  }
+  function mitIkon(el, name, text) {
+    el.innerHTML = ikon(name);
+    if (text) { var s = document.createElement('span'); s.textContent = text; el.appendChild(s); }
+    return el;
   }
 
   var state = { items: [], purchases: [], config: null };
@@ -773,7 +1079,7 @@
     box.setAttribute('role', 'checkbox');
     box.setAttribute('aria-checked', opts.bought ? 'true' : 'false');
     box.tabIndex = 0;
-    if (opts.bought) box.textContent = '✓';
+    if (opts.bought) box.innerHTML = ikon('haken');
     if (!pending) box.onclick = function () { toggleChecked(it.id, !opts.bought); };
 
     var nameWrap = document.createElement('span');
@@ -1021,7 +1327,7 @@
             setItemAktiv(it, !it.active);
           };
           var x = document.createElement('button');
-          x.className = 'x'; x.textContent = '✕';
+          x.className = 'x'; x.innerHTML = ikon('schliessen'); x.setAttribute('aria-label', 'Aus Vorschlägen entfernen');
           x.title = 'Aus Vorschlägen entfernen';
           x.onclick = function () {
             if (!confirm('„' + it.name + '" endgültig aus den Vorschlägen entfernen?')) return;
@@ -1136,7 +1442,7 @@
       var hinweis = document.createElement('p');
       hinweis.className = 'empty-note';
       hinweis.style.paddingBottom = '4px';
-      hinweis.textContent = 'Vermutlich dasselbe gemeint. Überflüssigen Eintrag mit ✕ löschen.';
+      hinweis.textContent = 'Vermutlich dasselbe gemeint. Überflüssigen Eintrag mit dem Kreuz löschen.';
       card.appendChild(hinweis);
       var ul = document.createElement('ul');
       ul.className = 'dupe-list';
@@ -1156,8 +1462,9 @@
           zeile.appendChild(txt);
           var del = document.createElement('button');
           del.className = 'row-btn';
-          del.textContent = '✕';
+          del.innerHTML = ikon('schliessen');
           del.title = 'Diesen Eintrag löschen';
+          del.setAttribute('aria-label', 'Diesen Eintrag löschen');
           del.onclick = function () {
             if (!confirm('„' + it.name + '" endgültig löschen?' +
                          (it.active ? '\n\nAchtung: steht gerade auf der Liste.' : ''))) return;
@@ -1201,7 +1508,7 @@
         '<td class="price num">' + p.price.toFixed(2) + ' €' + trend + '</td>' +
         '<td></td>';
       var del = document.createElement('button');
-      del.className = 'row-btn'; del.textContent = '✕';
+      del.className = 'row-btn'; del.innerHTML = ikon('schliessen'); del.setAttribute('aria-label', 'Kauf löschen');
       del.onclick = function () {
         deletedPurchaseIds[p.id] = true;               // sofort weg
         state.purchases = state.purchases.filter(function (o) { return o.id !== p.id; });
@@ -1362,7 +1669,7 @@
 
       var handle = document.createElement('span');
       handle.className = 'drag-handle';
-      handle.textContent = '⠿';
+      handle.innerHTML = ikon('griff');
       handle.title = 'Ziehen zum Sortieren';
       li.appendChild(handle);
 
@@ -1375,7 +1682,7 @@
       btns.className = 'order-buttons';
 
       if (cat !== 'Sonstiges') {
-        var edit = document.createElement('button'); edit.textContent = '✎'; edit.title = 'Umbenennen';
+        var edit = document.createElement('button'); edit.innerHTML = ikon('stift'); edit.title = 'Umbenennen'; edit.setAttribute('aria-label', 'Umbenennen');
         edit.onclick = function () {
           var neu = prompt('Neuer Name für „' + cat + '":', cat);
           if (!neu || neu.trim() === '' || neu.trim() === cat) return;
@@ -1394,7 +1701,7 @@
             alert(err.message || String(err));
           });
         };
-        var del = document.createElement('button'); del.textContent = '✕'; del.title = 'Löschen';
+        var del = document.createElement('button'); del.innerHTML = ikon('schliessen'); del.title = 'Löschen'; del.setAttribute('aria-label', 'Löschen');
         del.onclick = function () {
           if (!confirm('Kategorie „' + cat + '" löschen? Betroffene Artikel wandern nach „Sonstiges".')) return;
           katLoeschenLokal(state, cat);                            // sofort sichtbar
@@ -1433,7 +1740,7 @@
 
       var handle = document.createElement('span');
       handle.className = 'drag-handle';
-      handle.textContent = '⠿';
+      handle.innerHTML = ikon('griff');
       handle.title = 'Ziehen zum Sortieren';
       li.appendChild(handle);
 
@@ -1957,7 +2264,7 @@
         if (r.files.length) meta.push(r.files.length === 1 ? 'Rezeptkarte' : r.files.length + ' Dateien');
         links.appendChild(mk('div', 'rk-meta', meta.join(' · ')));
         zeile.appendChild(aussen);
-        zeile.appendChild(mk('span', 'rk-pfeil', '›'));
+        var pfeil = mk('span', 'rk-pfeil'); pfeil.innerHTML = ikon('rechts'); zeile.appendChild(pfeil);
         zeile.onclick = function () { oeffneRezept(r.id); };
         card.appendChild(zeile);
       });
@@ -1970,7 +2277,7 @@
     var abwahl = rezeptAbwahl[r.id] || {};
 
     var kopf = mk('div');
-    var zurueck = mk('button', 'link-btn', '← Alle Rezepte');
+    var zurueck = mitIkon(mk('button', 'link-btn klein'), 'links', 'Alle Rezepte');
     zurueck.onclick = zeigeRezeptListe;
     kopf.appendChild(zurueck);
     kopf.appendChild(mk('h2', 'rezept-titel', r.title));
@@ -1989,7 +2296,8 @@
       var an = !abwahl[idx];
       if (an) anzahl++;
       var li = mk('li', an ? '' : 'aus');
-      var box = mk('div', 'checkbox' + (an ? ' checked' : ''), an ? '✓' : '');
+      var box = mk('div', 'checkbox' + (an ? ' checked' : ''));
+      if (an) box.innerHTML = ikon('haken');
       box.setAttribute('role', 'checkbox');
       box.setAttribute('aria-checked', an ? 'true' : 'false');
       li.appendChild(box);
@@ -2039,7 +2347,7 @@
         box.appendChild(mk('div', 'status-text', 'wird geladen …'));
       } else if (c.fehler) {
         box.appendChild(mk('div', 'fehler', 'Konnte nicht geladen werden: ' + c.fehler));
-        var nochmal = mk('button', 'link-btn', 'Nochmal versuchen');
+        var nochmal = mk('button', 'link-btn klein', 'Nochmal versuchen');
         nochmal.onclick = function () { delete dateiCache[f.id]; renderRezepte(); };
         box.appendChild(nochmal);
       } else if (/^image\//.test(c.mimeType)) {
@@ -2066,13 +2374,11 @@
       var fz = mk('div', 'datei-zeile');
       fz.appendChild(mk('span', null, f.name));
       if (c.url && /^image\//.test(c.mimeType)) {
-        var vb = mk('button', 'link-btn', 'Als Vorschaubild');
-        vb.style.fontSize = '0.8rem';
-        vb.style.whiteSpace = 'nowrap';
+        var vb = mk('button', 'link-btn klein', 'Als Vorschaubild');
         vb.onclick = function () { thumbSetzen(r, c.url, true); };
         fz.appendChild(vb);
       }
-      var del = mk('button', 'row-btn', '✕ entfernen');
+      var del = mitIkon(mk('button', 'row-btn'), 'schliessen', 'entfernen');
       del.onclick = function () {
         if (!confirm('Datei „' + f.name + '" aus dem Rezept entfernen?')) return;
         call('deleteRecipeFile', r.id, f.id).then(setState).catch(function (err) { alert(fehlerText(err)); });
@@ -2082,7 +2388,7 @@
       dCard.appendChild(box);
     });
     var dAkt = mk('div', 'aktionen');
-    var hinzu = mk('button', 'secondary', '+ Foto oder PDF hinzufügen');
+    var hinzu = mitIkon(mk('button', 'secondary'), 'plus', 'Foto oder PDF hinzufügen');
     hinzu.disabled = !!rezeptUpload[r.id];
     hinzu.onclick = function () {
       dateiZielRezept = r.id;
@@ -2165,7 +2471,7 @@
     var r = id ? findeRezept(id) : null;
     var katWahl = {}; // normName(Zutat) -> gewählte Kategorie
 
-    var abbr = mk('button', 'link-btn', '← Abbrechen');
+    var abbr = mitIkon(mk('button', 'link-btn klein'), 'links', 'Abbrechen');
     abbr.onclick = schliesseEditor;
     host.appendChild(abbr);
 
@@ -2307,16 +2613,16 @@
     var steuer = mk('div', 'lb-steuer');
     var zurueck = null, weiter = null;
     if (bilder.length > 1) {
-      zurueck = mk('button', null, '‹');
+      zurueck = mitIkon(mk('button'), 'links');
       zurueck.setAttribute('aria-label', 'Vorheriges Bild');
       zurueck.onclick = function () { if (i > 0) { i--; zeige(); } };
-      weiter = mk('button', null, '›');
+      weiter = mitIkon(mk('button'), 'rechts');
       weiter.setAttribute('aria-label', 'Nächstes Bild');
       weiter.onclick = function () { if (i < bilder.length - 1) { i++; zeige(); } };
       steuer.appendChild(zurueck);
       steuer.appendChild(weiter);
     }
-    var zu = mk('button', null, '✕');
+    var zu = mitIkon(mk('button'), 'schliessen');
     zu.setAttribute('aria-label', 'Schließen');
     zu.onclick = function () { schliesseBild(); };
     steuer.appendChild(zu);
@@ -2383,7 +2689,7 @@
     if (e.key === 'Escape') schliesseBild();
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       var btn = box.querySelectorAll('.lb-steuer button')[e.key === 'ArrowLeft' ? 0 : 1];
-      if (btn && btn.textContent !== '✕' && !btn.disabled) btn.click();
+      if (btn && btn.getAttribute('aria-label') !== 'Schließen' && !btn.disabled) btn.click();
     }
   });
 
@@ -2419,6 +2725,21 @@
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
     };
   });
+
+  // Zahnrad oben rechts öffnet die Einstellungen; der Tab-Knopf dafür bleibt
+  // unsichtbar in der Leiste, damit die bestehende Tab-Logik unverändert gilt.
+  (function () {
+    var zahnrad = document.getElementById('zahnrad');
+    var einst = document.querySelector('nav.tabs button[data-tab="einstellungen"]');
+    zahnrad.onclick = function () { einst.click(); };
+    document.querySelectorAll('nav.tabs button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var an = b.dataset.tab === 'einstellungen';
+        zahnrad.classList.toggle('aktiv', an);
+        zahnrad.setAttribute('aria-pressed', an ? 'true' : 'false');
+      });
+    });
+  })();
 
   // Neue Artikel erscheinen sofort (mit vorläufiger ID, leicht ausgegraut) und
   // werden ersetzt, sobald der Server geantwortet hat — statt eine Sekunde auf
