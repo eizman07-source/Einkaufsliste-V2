@@ -685,6 +685,24 @@
   .chip { font-weight: 400; }
   .chip-wrap { padding-top: 6px; }
 
+  /* ---- Anmeldung mit Zugangscode ---- */
+  .anmeldung {
+    position: fixed; inset: 0; z-index: 900; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+  }
+  .anmeldung-karte {
+    width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 18px; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; text-align: center;
+  }
+  .anmeldung-karte img { margin: 0 auto; border-radius: 16px; }
+  .anmeldung-karte h2 { margin: 0; font-size: 28px; font-weight: 300; }
+  .anmeldung-karte p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+  .anmeldung-karte input[type="password"] {
+    height: 48px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--flaeche);
+    font: inherit; font-size: 16px; color: var(--ink); text-align: center;
+  }
+  .anmeldung-karte button.primary { width: 100%; }
+
   /* Schmale Handys: Tabs etwas kompakter, damit alle vier sichtbar sind */
   @media (max-width: 430px) {
     nav.tabs { gap: 2px; }
@@ -828,11 +846,32 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <div class="grtitel">Dieses Gerät</div>
+      <div class="gruppe">
+        <p class="gruppe-hinweis">Angemeldet mit eurem gemeinsamen Zugangscode. Nach dem Abmelden fragt die App beim nächsten Öffnen wieder danach.</p>
+        <div class="save-row">
+          <button class="secondary" id="abmelden" type="button">Auf diesem Gerät abmelden</button>
+        </div>
+      </div>
+    </div>
   </section>
 
 </main>
 
 <div class="toast" id="toast"></div>
+
+<div class="anmeldung" id="anmeldung" hidden>
+  <form class="anmeldung-karte" id="anmeldungForm" autocomplete="on">
+    <img src="icon-192.png" alt="" width="64" height="64">
+    <h2>Einkaufsliste</h2>
+    <p>Bitte euren gemeinsamen Zugangscode eingeben. Er wird auf diesem Gerät gespeichert.</p>
+    <input type="password" id="zugangInput" name="password" autocomplete="current-password" placeholder="Zugangscode" required>
+    <div class="fehler" id="anmeldungFehler"></div>
+    <button class="primary" type="submit" id="anmeldungKnopf">Anmelden</button>
+  </form>
+</div>
 
 <script>
   // ---- Backend-Aufruf per fetch() als Promise ----
@@ -843,7 +882,7 @@
   //
   // WICHTIG hier eintragen: die eigene /exec-URL aus Apps Script
   // (Bereitstellen → Bereitstellungen verwalten). Ohne das funktioniert nichts.
-  var API_URL = 'https://script.google.com/macros/s/AKfycby3ba9b2QvD9yMePeHNU8llcKtzZqTqtU3cAWBmA101ugRXFlRtUHUAfIlGJy8BaQrc/exec';
+  var API_URL = 'https://script.google.com/macros/s/AKfycbw822ztI6TKmJAudJaC6EntlXJ1U7OTJI7HXGsza_XZe35sknIiVNM5OScrcE1eu4SS/exec';
 
   // Jeder Aufruf bekommt eine fortlaufende Nummer. Der Server garantiert nicht,
   // dass Antworten in der Reihenfolge der Aufrufe ankommen — z. B. kann das
@@ -856,6 +895,45 @@
   var pendingMutations = 0;   // laufende bzw. wartende schreibende Aufrufe
   var lastLocalAction = Date.now();
 
+  // ---- Zugangscode ----
+  // Jede Anfrage trägt den gemeinsamen Zugangscode; ohne ihn lehnt das
+  // Backend ab. Der Code steht NICHT in dieser Datei (das Repository ist
+  // öffentlich), sondern wird einmal pro Gerät eingegeben und dort gemerkt.
+  var ZUGANG_SPEICHER = 'einkaufsliste-zugangscode-v1';
+  var zugangscode = '';
+  try { zugangscode = localStorage.getItem(ZUGANG_SPEICHER) || ''; } catch (err) { zugangscode = ''; }
+
+  function anfrageBody(fn, args) {
+    return JSON.stringify({ rpc: fn, args: args, code: zugangscode });
+  }
+
+  function antwortFehler(data) {
+    var err = new Error(data.error || 'Serverfehler');
+    if (data.zugang) {
+      err.zugang = true;
+      zugangVerloren(data.error);
+    }
+    return err;
+  }
+
+  function zugangVerloren(meldung) {
+    zugangscode = '';
+    try { localStorage.removeItem(ZUGANG_SPEICHER); } catch (err) {}
+    if (typeof refreshTimer !== 'undefined') clearTimeout(refreshTimer);
+    zeigeAnmeldung(meldung);
+  }
+
+  function zeigeAnmeldung(meldung) {
+    var box = document.getElementById('anmeldung');
+    box.hidden = false;
+    document.getElementById('anmeldungFehler').textContent = meldung || '';
+    var knopf = document.getElementById('anmeldungKnopf');
+    knopf.disabled = false;
+    knopf.textContent = 'Anmelden';
+    var feld = document.getElementById('zugangInput');
+    setTimeout(function () { feld.focus(); }, 50);
+  }
+
   function rawCall(fn, args) {
     var seq = ++callSeq;
     return fetch(API_URL, {
@@ -864,12 +942,12 @@
       // application/json würde der Browser eine CORS-Preflight-Anfrage
       // (OPTIONS) schicken, die Apps Script nicht beantwortet, und der Aufruf
       // schlägt fehl. Apps Script liest den Body trotzdem als JSON.
-      body: JSON.stringify({ rpc: fn, args: args })
+      body: anfrageBody(fn, args)
     }).then(function (res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.json();
     }).then(function (data) {
-      if (!data.ok) throw new Error(data.error || 'Serverfehler');
+      if (!data.ok) throw antwortFehler(data);
       var result = data.state;
       if (result && typeof result === 'object') result.__seq = seq;
       return result;
@@ -920,9 +998,9 @@
   // Direkter Aufruf ohne Warteschlange und ohne State-Übernahme — für reine
   // Lese-Aufrufe wie das Laden einer Rezeptkarte (Antwort ist kein App-Stand).
   function rpcDirekt(fn, args) {
-    return fetch(API_URL, { method: 'POST', body: JSON.stringify({ rpc: fn, args: args }) })
+    return fetch(API_URL, { method: 'POST', body: anfrageBody(fn, args) })
       .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
-      .then(function (data) { if (!data.ok) throw new Error(data.error || 'Serverfehler'); return data.state; });
+      .then(function (data) { if (!data.ok) throw antwortFehler(data); return data.state; });
   }
 
   // ---- Linien-Symbole (statt Sonderzeichen wie ✓ ✕ ⠿ ⚙) ----
@@ -2919,6 +2997,7 @@
       setState(s);
     }).catch(function (err) {
       console.error('Ladefehler (voller Fehler):', err);
+      if (err && err.zugang) return; // Anmeldung wird bereits angezeigt
       if (retriesLeft > 0) {
         setTimeout(function () { loadState(retriesLeft - 1); }, 900);
       } else {
@@ -2927,7 +3006,40 @@
       }
     });
   }
-  loadState();
+  if (zugangscode) loadState();
+  else zeigeAnmeldung('');
+
+  document.getElementById('anmeldungForm').onsubmit = function (e) {
+    e.preventDefault();
+    var eingabe = document.getElementById('zugangInput').value.trim();
+    if (!eingabe) return;
+    var knopf = document.getElementById('anmeldungKnopf');
+    knopf.disabled = true;
+    knopf.textContent = 'Wird geprüft …';
+    document.getElementById('anmeldungFehler').textContent = '';
+    zugangscode = eingabe;
+    rawCall('getState', []).then(function (s) {
+      try { localStorage.setItem(ZUGANG_SPEICHER, zugangscode); } catch (err) {}
+      document.getElementById('anmeldung').hidden = true;
+      document.getElementById('zugangInput').value = '';
+      setState(s);
+      lastLocalAction = Date.now();
+      scheduleRefresh();
+    }).catch(function (err) {
+      if (err && err.zugang) return; // zugangVerloren() zeigt die Meldung schon an
+      zugangscode = '';
+      knopf.disabled = false;
+      knopf.textContent = 'Anmelden';
+      document.getElementById('anmeldungFehler').textContent =
+        'Keine Verbindung zum Server: ' + (err && err.message ? err.message : String(err));
+    });
+  };
+
+  document.getElementById('abmelden').onclick = function () {
+    if (!confirm('Auf diesem Gerät abmelden? Beim nächsten Öffnen wird der Zugangscode wieder abgefragt.')) return;
+    try { localStorage.removeItem(ZUGANG_SPEICHER); } catch (err) {}
+    location.reload();
+  };
 
   // ---- Auto-Refresh, damit beide Personen aktuelle Daten sehen ----
   // Kein fester Takt: solange jemand aktiv ist (letzte Änderung < 3 Min her)
@@ -2943,6 +3055,7 @@
 
   function scheduleRefresh() {
     clearTimeout(refreshTimer);
+    if (!zugangscode) return; // ohne Anmeldung nicht abfragen
     var idle = (Date.now() - lastLocalAction) > ACTIVE_WINDOW;
     refreshTimer = setTimeout(runRefresh, idle ? POLL_IDLE : POLL_ACTIVE);
   }
@@ -2966,7 +3079,7 @@
   }
 
   function refreshNow() {
-    if (document.hidden || pendingMutations > 0) return;
+    if (!zugangscode || document.hidden || pendingMutations > 0) return;
     if (Date.now() - lastRefreshStart < 1500) return; // nicht spammen
     clearTimeout(refreshTimer);
     runRefresh();
