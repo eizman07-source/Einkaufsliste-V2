@@ -5,7 +5,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Einkaufsliste</title>
-<meta name="theme-color" content="#3f7d58">
+<meta name="theme-color" content="#e7f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#071a1c" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
@@ -721,6 +722,347 @@
     background: var(--ink); color: var(--surface); padding: 12px 18px; border-radius: 999px;
     font-size: 14px; font-weight: 600; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); max-width: calc(100% - 32px); text-align: center;
   }
+
+  /* ===== Haushalt Design-System: Tokens (Präfix --hh-, Werte aus tokens.json) ===== */
+  :root {
+    --hh-surface: #e7f3ef;
+    --hh-pastel-mint: #cdeee3;
+    --hh-pastel-sky: #d6e9f7;
+    --hh-pastel-peach: #fde3d3;
+    --hh-pastel-sand: #f5ecd2;
+    --hh-glass-fill: rgba(255, 255, 255, 0.55);
+    --hh-glass-fill-strong: rgba(255, 255, 255, 0.78);
+    --hh-glass-edge: rgba(255, 255, 255, 0.85);
+    --hh-glass-fallback: #f4faf8;
+    --hh-surface-raised: #f9fdfc;
+    --hh-panel: #0a2a2d;
+    --hh-panel-line: #1d4a4d;
+    --hh-on-panel: #e6f6f3;
+    --hh-line: rgba(10, 38, 40, 0.12);
+    --hh-line-strong: #668786;
+    --hh-ink: #0a2628;
+    --hh-ink-muted: #3b5658;
+    --hh-petrol: #0b5d63;
+    --hh-petrol-strong: #084a4f;
+    --hh-on-petrol: #ffffff;
+    --hh-petrol-soft: #cfe9e7;
+    --hh-knob: #ffffff;
+    --hh-led-teal: #19f0dc;
+    --hh-led-green: #3dff9a;
+    --hh-led-amber: #ffb627;
+    --hh-led-red: #ff3b5c;
+    --hh-led-off: #b9cbc9;
+    --hh-led-bezel: var(--hh-ink-muted);
+    --hh-ok: #086b45;
+    --hh-ok-soft: #d3f1e2;
+    --hh-warn: #7f4a00;
+    --hh-warn-soft: #fbe8c8;
+    --hh-alert: #a8203a;
+    --hh-alert-soft: #fbd9df;
+    --hh-focus-ring: var(--hh-petrol);
+    --hh-shadow-glass: 0 8px 32px rgba(11, 93, 99, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    --hh-shadow-glass-raised: 0 16px 48px rgba(11, 93, 99, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    --hh-shadow-button: 0 4px 12px rgba(11, 93, 99, 0.25);
+    --hh-shadow-card: 0 2px 12px rgba(11, 93, 99, 0.10);
+    --hh-space-1: 4px;
+    --hh-space-2: 8px;
+    --hh-space-3: 12px;
+    --hh-space-4: 16px;
+    --hh-space-5: 24px;
+    --hh-space-6: 32px;
+    --hh-space-7: 48px;
+    --hh-radius-sm: 10px;
+    --hh-radius-md: 16px;
+    --hh-radius-lg: 24px;
+    --hh-radius-xl: 32px;
+    --hh-radius-pill: 999px;
+    --hh-glass-blur: 24px;
+    --hh-glass-blur-strong: 40px;
+    --hh-glass-saturate: 180%;
+    --hh-font-sans: Aptos, "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --hh-font-display: "Aptos Display", Aptos, "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --hh-surface: #071a1c;
+      --hh-pastel-mint: #0f3530;
+      --hh-pastel-sky: #102a3d;
+      --hh-pastel-peach: #3d231b;
+      --hh-pastel-sand: #332c15;
+      --hh-glass-fill: rgba(190, 235, 230, 0.16);
+      --hh-glass-fill-strong: rgba(190, 235, 230, 0.22);
+      --hh-glass-edge: rgba(255, 255, 255, 0.28);
+      --hh-glass-fallback: #243b3c;
+      --hh-surface-raised: #12292b;
+      --hh-panel: #133f42;
+      --hh-panel-line: #24585b;
+      --hh-on-panel: #e6f6f3;
+      --hh-line: rgba(230, 246, 243, 0.12);
+      --hh-line-strong: #a0c1be;
+      --hh-ink: #e6f6f3;
+      --hh-ink-muted: #c2dad7;
+      --hh-petrol: #6ae2d9;
+      --hh-petrol-strong: #93ece5;
+      --hh-on-petrol: #03201e;
+      --hh-petrol-soft: #0f3b3d;
+      --hh-knob: #f2fbfa;
+      --hh-led-teal: #2ff5e2;
+      --hh-led-green: #4dffa6;
+      --hh-led-amber: #ffc24a;
+      --hh-led-red: #ff5470;
+      --hh-led-off: #2c4442;
+      --hh-led-bezel: var(--hh-ink-muted);
+      --hh-ok: #72eab4;
+      --hh-ok-soft: #0d3324;
+      --hh-warn: #ffcb66;
+      --hh-warn-soft: #3a2a08;
+      --hh-alert: #ffbac5;
+      --hh-alert-soft: #3d1420;
+      --hh-focus-ring: #93ece5;
+      --hh-shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      --hh-shadow-glass-raised: 0 16px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      --hh-shadow-button: 0 4px 12px rgba(0, 0, 0, 0.45);
+      --hh-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --hh-surface: #071a1c;
+    --hh-pastel-mint: #0f3530;
+    --hh-pastel-sky: #102a3d;
+    --hh-pastel-peach: #3d231b;
+    --hh-pastel-sand: #332c15;
+    --hh-glass-fill: rgba(190, 235, 230, 0.16);
+    --hh-glass-fill-strong: rgba(190, 235, 230, 0.22);
+    --hh-glass-edge: rgba(255, 255, 255, 0.28);
+    --hh-glass-fallback: #243b3c;
+    --hh-surface-raised: #12292b;
+    --hh-panel: #133f42;
+    --hh-panel-line: #24585b;
+    --hh-on-panel: #e6f6f3;
+    --hh-line: rgba(230, 246, 243, 0.12);
+    --hh-line-strong: #a0c1be;
+    --hh-ink: #e6f6f3;
+    --hh-ink-muted: #c2dad7;
+    --hh-petrol: #6ae2d9;
+    --hh-petrol-strong: #93ece5;
+    --hh-on-petrol: #03201e;
+    --hh-petrol-soft: #0f3b3d;
+    --hh-knob: #f2fbfa;
+    --hh-led-teal: #2ff5e2;
+    --hh-led-green: #4dffa6;
+    --hh-led-amber: #ffc24a;
+    --hh-led-red: #ff5470;
+    --hh-led-off: #2c4442;
+    --hh-led-bezel: var(--hh-ink-muted);
+    --hh-ok: #72eab4;
+    --hh-ok-soft: #0d3324;
+    --hh-warn: #ffcb66;
+    --hh-warn-soft: #3a2a08;
+    --hh-alert: #ffbac5;
+    --hh-alert-soft: #3d1420;
+    --hh-focus-ring: #93ece5;
+    --hh-shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    --hh-shadow-glass-raised: 0 16px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    --hh-shadow-button: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --hh-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+  /* ===== Haushalt Design-System: gemeinsame Bausteine ===== */
+  html { background: var(--hh-surface); }
+  body {
+    background: var(--hh-surface);
+    color: var(--hh-ink);
+    font-family: var(--hh-font-sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    isolation: isolate;
+  }
+  /* Pastellflächen hinter dem Glas (fest, scrollen nicht mit) */
+  body::before, body::after {
+    content: ""; position: fixed; z-index: -1; pointer-events: none;
+    border-radius: var(--hh-radius-pill);
+  }
+  body::before { width: 340px; height: 340px; left: -120px; top: -140px; background: var(--hh-pastel-peach); }
+  body::after  { width: 420px; height: 280px; right: -140px; top: 38vh; background: var(--hh-pastel-sky); }
+
+  .hh-glass {
+    background: var(--hh-glass-fill);
+    -webkit-backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+    backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+    border: 1px solid var(--hh-glass-edge);
+    box-shadow: var(--hh-shadow-glass);
+  }
+
+  /* Weicher Ausblendrand hinter dem Dock */
+  .hh-scroll-edge {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 8;
+    height: calc(120px + env(safe-area-inset-bottom));
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, var(--hh-surface));
+    -webkit-backdrop-filter: blur(var(--hh-glass-blur));
+    backdrop-filter: blur(var(--hh-glass-blur));
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 60%);
+    mask-image: linear-gradient(to bottom, transparent, #000 60%);
+  }
+
+  /* Dock: schwebende Tab-Leiste unten */
+  nav.hh-dock-bar {
+    position: fixed; z-index: 10; left: 50%; transform: translateX(-50%);
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    display: inline-flex; gap: 2px; padding: 4px; margin: 0; max-width: calc(100vw - 24px);
+    border-radius: var(--hh-radius-pill);
+    background: var(--hh-glass-fill-strong);
+    -webkit-backdrop-filter: blur(var(--hh-glass-blur-strong)) saturate(var(--hh-glass-saturate));
+    backdrop-filter: blur(var(--hh-glass-blur-strong)) saturate(var(--hh-glass-saturate));
+    border: 0;
+    box-shadow: var(--hh-shadow-glass-raised), inset 0 0 0 1px var(--hh-glass-edge);
+    overflow: visible;
+  }
+  nav.hh-dock-bar > button {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    flex: 0 0 auto; min-width: 72px; height: 50px; padding: 0 10px; margin: 0;
+    border: 0; border-radius: var(--hh-radius-pill); background: transparent; box-shadow: none;
+    font-family: var(--hh-font-sans); font-size: 12px; line-height: 14px; font-weight: 600;
+    color: var(--hh-ink); cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+  nav.hh-dock-bar > button .hh-icon { width: 22px; height: 22px; display: block; pointer-events: none; }
+  nav.hh-dock-bar > button span { pointer-events: none; }
+  nav.hh-dock-bar > button.active, nav.hh-dock-bar > button.aktiv, nav.hh-dock-bar > button[aria-selected="true"] {
+    background: var(--hh-petrol-soft); color: var(--hh-petrol); box-shadow: none;
+  }
+  @media (max-width: 380px) {
+    nav.hh-dock-bar > button { min-width: 64px; padding: 0 6px; font-size: 11px; }
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .hh-glass, nav.hh-dock-bar { background: var(--hh-glass-fallback); }
+  }
+
+  /* LED-Punkt */
+  .hh-led {
+    display: inline-block; width: 8px; height: 8px; border-radius: var(--hh-radius-pill); flex: none;
+    background: var(--hh-led-off); box-shadow: 0 0 0 1px var(--hh-led-bezel);
+  }
+  .hh-led--on    { background: var(--hh-led-teal);  box-shadow: 0 0 0 1px var(--hh-led-bezel); }
+  .hh-led--ok    { background: var(--hh-led-green); box-shadow: 0 0 0 1px var(--hh-led-bezel); }
+  .hh-led--warn  { background: var(--hh-led-amber); box-shadow: 0 0 0 1px var(--hh-led-bezel); }
+  .hh-led--alert { background: var(--hh-led-red);   box-shadow: 0 0 0 1px var(--hh-led-bezel); }
+  /* ===== Haushalt Design-System: Einkaufsliste =====
+     Bisherige Variablen zeigen auf die Haushalt-Tokens. Der Selektor ist
+     bewusst etwas spezifischer, damit er auch die Dunkel-Blöcke oben schlägt.
+     Klassen und IDs, die das JavaScript nutzt, sind unverändert. */
+  html:root:not([data-hh-aus]) {
+    --bg: var(--hh-surface);
+    --surface: var(--hh-surface-raised);
+    --ink: var(--hh-ink);
+    --muted: var(--hh-ink-muted);
+    --line: var(--hh-line);
+    --accent: var(--hh-petrol);
+    --accent-ink: var(--hh-on-petrol);
+    --accent-soft: var(--hh-petrol-soft);
+    --danger: var(--hh-alert);
+    --danger-soft: var(--hh-alert-soft);
+    --radius: var(--hh-radius-lg);
+    --shadow: var(--hh-shadow-glass);
+    --pastel: var(--hh-petrol-soft);
+    --pastel-ink: var(--hh-petrol);
+    --flaeche: var(--hh-glass-fill-strong);
+    --kreis: var(--hh-line-strong);
+  }
+  html, body { font-family: var(--hh-font-sans); }
+  body { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
+
+  /* Kopf */
+  header.top h1 { font-family: var(--hh-font-display); font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: -0.01em; }
+  #subtitle { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--hh-ink-muted); }
+  .rund {
+    background: var(--hh-glass-fill-strong); border: 0; color: var(--hh-ink);
+    box-shadow: var(--hh-shadow-glass), inset 0 0 0 1px var(--hh-glass-edge);
+    -webkit-backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+    backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+  }
+  .rund.aktiv { background: var(--hh-petrol); color: var(--hh-on-petrol); box-shadow: var(--hh-shadow-button); }
+
+  /* Laden-Auswahl als Glas-Segment */
+  .store-switch {
+    background: var(--hh-glass-fill-strong);
+    box-shadow: inset 0 0 0 1px var(--hh-glass-edge), var(--hh-shadow-glass);
+    -webkit-backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+    backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+  }
+  .store-switch button { color: var(--hh-ink-muted); }
+  .store-switch button.active { background: var(--hh-petrol-soft); color: var(--hh-petrol); box-shadow: none; }
+
+  /* Karten und Gruppen aus Glas */
+  .card, .gruppe, .anmeldung-karte {
+    background: var(--hh-glass-fill);
+    -webkit-backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+    backdrop-filter: blur(var(--hh-glass-blur)) saturate(var(--hh-glass-saturate));
+    border: 1px solid var(--hh-glass-edge);
+    border-radius: var(--hh-radius-lg);
+    box-shadow: var(--hh-shadow-glass);
+  }
+  .order-list li { background: transparent; }
+  .card-head h3 { font-size: 17px; line-height: 22px; font-weight: 600; }
+  .grtitel { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.04em; }
+
+  /* Felder: dichtes Glas mit Kontur */
+  input[type="text"], input[type="number"], input[type="date"], input[type="search"], input[type="password"], select, textarea, .note-input, .store-name-input,
+  .anmeldung-karte input[type="password"], .vorrat-search-wrap input[type="search"] {
+    background-color: var(--hh-glass-fill-strong);
+    border: 1px solid var(--hh-line-strong);
+    color: var(--hh-ink);
+  }
+  input[type="text"], input[type="number"], input[type="date"], input[type="password"], select, .note-input, .store-name-input { border-radius: var(--hh-radius-md); }
+  textarea, textarea.rezept-text { border: 1px solid var(--hh-line-strong); border-radius: var(--hh-radius-md); }
+  input:focus, select:focus, textarea:focus { border-color: var(--hh-petrol); }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .checkbox:focus-visible, a:focus-visible {
+    outline: 2px solid var(--hh-focus-ring); outline-offset: 2px;
+  }
+
+  /* Knöpfe */
+  button.primary { background: var(--hh-petrol); color: var(--hh-on-petrol); box-shadow: var(--hh-shadow-button); }
+  button.primary:hover:not(:disabled) { background: var(--hh-petrol-strong); }
+  button.secondary, a.secondary, .link-btn, .clear-bought-btn {
+    background: var(--hh-glass-fill-strong); color: var(--hh-ink);
+    box-shadow: inset 0 0 0 1px var(--hh-glass-edge), var(--hh-shadow-glass);
+  }
+  .link-btn { color: var(--hh-petrol); }
+  button.danger, button.secondary.danger { background: var(--hh-alert-soft); color: var(--hh-alert); box-shadow: none; }
+  .order-buttons button { background: var(--hh-glass-fill-strong); border: 1px solid var(--hh-line-strong); }
+  .drag-handle { color: var(--hh-ink-muted); }
+
+  /* Abhak-Kreis mit Leuchten */
+  .checkbox { border: 1.5px solid var(--hh-line-strong); background: transparent; }
+  .checkbox.checked { background: var(--hh-petrol); border-color: var(--hh-petrol); color: var(--hh-on-petrol); }
+
+  /* Chips: auf der Liste = aktiv, mit LED */
+  .chip { background: var(--hh-glass-fill-strong); border: 1px solid var(--hh-glass-edge); color: var(--hh-ink); }
+  .chip.on-list { background: var(--hh-petrol-soft); border-color: var(--hh-petrol-soft); color: var(--hh-petrol); }
+  .chip.on-list::before {
+    content: ""; width: 7px; height: 7px; margin-right: 3px; border-radius: var(--hh-radius-pill); flex: none;
+    background: var(--hh-led-teal); box-shadow: 0 0 0 1px var(--hh-led-bezel);
+  }
+  .count-pill { background: var(--hh-glass-fill-strong); color: var(--hh-ink-muted); }
+  .note-tag { background: var(--hh-petrol-soft); color: var(--hh-petrol); }
+
+  /* Status-Farben */
+  .trend.up { background: var(--hh-alert-soft); color: var(--hh-alert); }
+  .trend.down { background: var(--hh-ok-soft); color: var(--hh-ok); }
+  .z-hinweis { background: var(--hh-ok-soft); color: var(--hh-ok); }
+  .fehler { color: var(--hh-alert); }
+  .rk-thumb { background: var(--hh-petrol-soft); color: var(--hh-petrol); }
+
+  /* Neues Rezept: runder Petrol-Knopf über dem Dock */
+  .fab {
+    right: max(16px, calc(50% - 304px)); bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 11;
+    width: 56px; height: 56px; background: var(--hh-petrol); color: var(--hh-on-petrol); box-shadow: var(--hh-shadow-button);
+  }
+  .fab .ik { width: 24px; height: 24px; }
+
+  /* Meldung über dem Dock, auf dem Leuchtpaneel */
+  .toast { bottom: calc(92px + env(safe-area-inset-bottom)); background: var(--hh-panel); color: var(--hh-on-panel); }
+
+  .anmeldung { background: transparent; -webkit-backdrop-filter: blur(var(--hh-glass-blur-strong)); backdrop-filter: blur(var(--hh-glass-blur-strong)); }
 </style>
 </head>
 <body>
@@ -733,12 +1075,12 @@
   <button class="rund" id="zahnrad" type="button" title="Einstellungen" aria-label="Einstellungen" aria-pressed="false"><svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
 </header>
 <div class="leisten">
-  <nav class="tabs">
-    <button data-tab="liste" class="active">Liste</button>
-    <button data-tab="vorrat">Vorschläge</button>
-    <button data-tab="rezepte">Rezepte</button>
-    <button data-tab="auswertung">Auswertung</button>
-    <button data-tab="einstellungen" hidden>Einstellungen</button>
+  <nav class="tabs hh-dock-bar" aria-label="Bereiche">
+    <button data-tab="liste" class="active"><svg class="hh-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" /><path d="M13 6h8" /><path d="M13 12h8" /><path d="M13 18h8" /></svg><span>Liste</span></button>
+    <button data-tab="vorrat"><svg class="hh-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m15 11-1 9" /><path d="m19 11-4-7" /><path d="M2 11h20" /><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4" /><path d="M4.5 15.5h15" /><path d="m5 11 4-7" /><path d="m9 11 1 9" /></svg><span>Vorschläge</span></button>
+    <button data-tab="rezepte"><svg class="hh-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z" /><path d="M6 17h12" /></svg><span>Rezepte</span></button>
+    <button data-tab="auswertung"><svg class="hh-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="m19 9-5 5-4-4-3 3" /></svg><span>Auswertung</span></button>
+    <button data-tab="einstellungen" hidden><svg class="hh-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg><span>Einstellungen</span></button>
   </nav>
   <div class="store-switch" id="storeSwitch"></div>
 </div>
@@ -860,6 +1202,7 @@
 
 </main>
 
+<div class="hh-scroll-edge" aria-hidden="true"></div>
 <div class="toast" id="toast"></div>
 
 <div class="anmeldung" id="anmeldung" hidden>
