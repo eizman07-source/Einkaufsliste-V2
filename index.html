@@ -1552,15 +1552,26 @@
         input.onclick = function (e) { e.stopPropagation(); };
         var cancelled = false;
         input.onkeydown = function (e) {
-          if (e.key === 'Enter') { input.blur(); }
+          // Während das iPhone ein Wort noch zusammensetzt (Autokorrektur/
+          // Vorschlag), nicht vorzeitig schließen.
+          if (e.isComposing || e.keyCode === 229) return;
+          if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
           else if (e.key === 'Escape') { cancelled = true; input.blur(); }
         };
+        var erledigt = false;
         input.onblur = function () {
+          if (erledigt) return;
+          erledigt = true;
           if (!cancelled) {
             var val = input.value.trim();
-            if (val !== (it.note || '')) {
+            // Kam während des Tippens ein Abgleich vom Server an, ist `it` ein
+            // veraltetes Objekt — der aktuelle Artikel steht in state.items.
+            var aktuell = state.items.filter(function (i) { return i.id === it.id; })[0] || it;
+            if (val !== (aktuell.note || '')) {
               it.note = val;
+              aktuell.note = val;
               var stamp = markOptimistic(it.id, { note: val });
+              applyOptimistic();
               call('setItemNote', it.id, val).then(function (s) {
                 clearOptimistic(it.id, stamp); setState(s);
               }).catch(function (err) {
