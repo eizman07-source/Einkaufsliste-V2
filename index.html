@@ -3460,15 +3460,34 @@ footer {
 
   /* Rahmen: Seitenleiste mit den Bereichen */
   html[data-design="lcars"] .lc-tab { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 4px; }
+  /* Sanftes Auf- und Zuklappen des linken Rahmens: alle Breiten gleiten mit */
+  html[data-design="lcars"] .left-frame-top, html[data-design="lcars"] .left-frame, html[data-design="lcars"] .left-frame::before,
+  html[data-design="lcars"] button[class^="panel-"], html[data-design="lcars"] .panel-spacer, html[data-design="lcars"] #topBtn {
+    transition: width 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  html[data-design="lcars"] .lc-tab .lc-txt {
+    display: block; overflow: hidden; white-space: nowrap; max-width: 140px; opacity: 1;
+    transition: max-width 260ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 180ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-design="lcars"] .left-frame-top, html[data-design="lcars"] .left-frame, html[data-design="lcars"] .left-frame::before,
+    html[data-design="lcars"] button[class^="panel-"], html[data-design="lcars"] .panel-spacer, html[data-design="lcars"] #topBtn,
+    html[data-design="lcars"] .lc-tab .lc-txt { transition: none; }
+  }
+  /* Datenkaskade auf dem Handy: eigene Zeile unter den Pillen, kleiner und flacher */
+  @media (width <= 640px) {
+    html[data-design="lcars"] .data-cascade-wrapper {
+      display: flex; order: 2; flex: 1 1 100%; margin-top: 0.6rem; padding-inline: 0.25rem 0.5rem;
+      --dc-font-size: 0.5rem; --dc-row-height: calc(var(--dc-font-size) + 0.15rem); height: calc(var(--dc-row-height) * 5); column-gap: 0.4rem;
+    }
+  }
   html[data-design="lcars"] .lc-tab .hh-icon { width: 20px; height: 20px; flex: none; stroke-width: 2.4; }
   html[data-design="lcars"] .lc-tab.lc-aktiv { background-color: var(--african-violet); }
   html[data-design="lcars"] .panel-2 { align-items: flex-end; }
   @media (width <= 540px) {
-    html[data-design="lcars"] .lc-tab .lc-txt { display: none; }
-    html[data-design="lcars"] .lc-tab { align-items: center; }
+    html[data-design="lcars"] .lc-tab .lc-txt { max-width: 0; opacity: 0; }
     html.lc-breit[data-design="lcars"] { --lfw: 128px; }
-    html.lc-breit[data-design="lcars"] .lc-tab .lc-txt { display: inline; }
-    html.lc-breit[data-design="lcars"] .lc-tab { align-items: flex-end; }
+    html.lc-breit[data-design="lcars"] .lc-tab .lc-txt { max-width: 140px; opacity: 1; }
   }
   /* Oben rechts: die drei Läden und Einstellungen als Pillen der Vorlage */
   /* Die Vorlage nutzt .active global (rote Fläche, Pfeil): für die App aufheben */
@@ -3500,7 +3519,7 @@ footer {
   html[data-design="lcars"] .card, html[data-design="lcars"] .gruppe, html[data-design="lcars"] .anmeldung-karte {
     background: transparent; border: 0; border-radius: 0; box-shadow: none; padding: 0; -webkit-backdrop-filter: none; backdrop-filter: none;
   }
-  html[data-design="lcars"] .card-head { display: flex; align-items: center; gap: 0.5rem; padding: 0; margin: 1.1rem 0 0.3rem; border: 0; }
+  html[data-design="lcars"] .card-head { display: flex; align-items: center; gap: 0.5rem; padding: 0; margin: 0.9rem 0 0.15rem; border: 0; }
   html[data-design="lcars"] .card-head h3 { margin: 0; font-size: clamp(1.15rem, 1.05rem + 1.25vw, 1.875rem); font-weight: 400; line-height: 1.2; color: var(--orange); text-transform: uppercase; }
   html[data-design="lcars"] .count-pill { margin-left: auto; padding: 0.1rem 0.7rem; border-radius: 100vmax; background: transparent; color: var(--butterscotch); box-shadow: inset 0 0 0 2px var(--butterscotch); font-size: 0.8rem; font-weight: 700; }
   html[data-design="lcars"] .card-head > div { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
@@ -3510,10 +3529,10 @@ footer {
   html[data-design="lcars"] p.subtitle, html[data-design="lcars"] .gruppe-hinweis, html[data-design="lcars"] .empty-note { font-size: var(--sub-fonts); color: #a99cd0; line-height: 1.4; }
 
   /* Artikel: Pillen-Punkt wie in .lcars-list; abgehakt = orange gefüllt */
-  html[data-design="lcars"] ul.item-list li { min-height: 48px; padding: 0.35rem 0; border-bottom: 0; gap: 0.75rem; background: transparent; }
-  html[data-design="lcars"] ul.item-list li .name { font-size: 1rem; font-weight: 400; color: var(--african-violet); }
+  html[data-design="lcars"] ul.item-list li { min-height: 38px; padding: 0.1rem 0; border-bottom: 0; gap: 0.6rem; background: transparent; }
+  html[data-design="lcars"] ul.item-list li .name { font-size: 0.9rem; line-height: 1.25; font-weight: 400; color: var(--african-violet); }
   html[data-design="lcars"] ul.item-list li.checked span.name { color: #6f6590; }
-  html[data-design="lcars"] .checkbox { width: 40px; height: 22px; border-radius: 50%; border: 2px solid var(--african-violet); background: transparent; color: transparent; }
+  html[data-design="lcars"] .checkbox { width: 24px; height: 24px; flex: none; border-radius: 50%; border: 2px solid var(--african-violet); background: transparent; color: transparent; }
   html[data-design="lcars"] .checkbox.checked { background: var(--orange); border-color: var(--orange); color: #000000; }
   html[data-design="lcars"] .checkbox .ik { width: 14px; height: 14px; }
   html[data-design="lcars"] .note-tag { border-radius: 100vmax; background: transparent; color: var(--bluey); box-shadow: inset 0 0 0 1.5px var(--bluey); font-size: 0.75rem; padding: 0 0.5rem; }
@@ -3713,9 +3732,7 @@ footer {
     <div class="right-frame-top">
       <div class="banner">Einkaufsliste</div>
       <div class="data-cascade-button-group">
-        <div class="data-cascade-wrapper" id="frozen">
-          <div class="data-column"><div class="dc-row-1">93</div><div class="dc-row-1">1853</div><div class="dc-row-2">24109</div><div class="dc-row-3">7</div><div class="dc-row-3">7024</div><div class="dc-row-4">322</div><div class="dc-row-5">4149</div><div class="dc-row-6">86</div><div class="dc-row-7">05</div></div><div class="data-column"><div class="dc-row-1">21509</div><div class="dc-row-1">68417</div><div class="dc-row-2">80</div><div class="dc-row-3">2048</div><div class="dc-row-3">319825</div><div class="dc-row-4">46233</div><div class="dc-row-5">05</div><div class="dc-row-6">2014</div><div class="dc-row-7">30986</div></div><div class="data-column"><div class="dc-row-1">585101</div><div class="dc-row-1">25403</div><div class="dc-row-2">31219</div><div class="dc-row-3">752</div><div class="dc-row-3">0604</div><div class="dc-row-4">21048</div><div class="dc-row-5">293612</div><div class="dc-row-6">534082</div><div class="dc-row-7">206</div></div><div class="data-column"><div class="dc-row-1">2107853</div><div class="dc-row-1">12201972</div><div class="dc-row-2">24487255</div><div class="dc-row-3">30412</div><div class="dc-row-3">98</div><div class="dc-row-4">4024161</div><div class="dc-row-5">888</div><div class="dc-row-6">35045462</div><div class="dc-row-7">41520257</div></div><div class="data-column"><div class="dc-row-1">33</div><div class="dc-row-1">56</div><div class="dc-row-2">04</div><div class="dc-row-3">69</div><div class="dc-row-3">41</div><div class="dc-row-4">15</div><div class="dc-row-5">25</div><div class="dc-row-6">65</div><div class="dc-row-7">21</div></div><div class="data-column"><div class="dc-row-1">0223</div><div class="dc-row-1">688</div><div class="dc-row-2">28471</div><div class="dc-row-3">21366</div><div class="dc-row-3">8654</div><div class="dc-row-4">31</div><div class="dc-row-5">1984</div><div class="dc-row-6">272</div><div class="dc-row-7">21854</div></div>
-        </div>
+        <div class="data-cascade-wrapper" id="default" aria-hidden="true"></div>
         <nav id="lcNav" aria-label="Läden und Einstellungen">
           <button type="button" id="lcEinst">Einstellungen</button>
         </nav>
@@ -3759,6 +3776,30 @@ footer {
   rechts.insertBefore(main, document.getElementById('lcFuss'));
   var nav = document.getElementById('lcNav');
   nav.insertBefore(document.getElementById('storeSwitch'), nav.firstChild);
+
+  // Datenkaskade: Zufallszahlen in 9 Zeilen je Spalte (Zeilenklassen wie in der
+  // Vorlage, deren Farbanimation das Flimmern erzeugt); alle paar Sekunden wird
+  // eine Spalte neu gewürfelt.
+  var kaskade = document.querySelector('.lc-vorlage .data-cascade-wrapper');
+  var ZEILEN = ['dc-row-1', 'dc-row-1', 'dc-row-2', 'dc-row-3', 'dc-row-3', 'dc-row-4', 'dc-row-5', 'dc-row-6', 'dc-row-7'];
+  function zahl() {
+    var n = 1 + Math.floor(Math.random() * 7), t = '';
+    for (var i = 0; i < n; i++) t += Math.floor(Math.random() * 10);
+    return t;
+  }
+  function spalte() {
+    var c = document.createElement('div'); c.className = 'data-column';
+    ZEILEN.forEach(function (k) { var d = document.createElement('div'); d.className = k; d.textContent = zahl(); c.appendChild(d); });
+    return c;
+  }
+  for (var sp = 0; sp < 24; sp++) kaskade.appendChild(spalte());
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function () {
+      if (document.hidden) return;
+      var alle = kaskade.children, i = Math.floor(Math.random() * alle.length);
+      kaskade.replaceChild(spalte(), alle[i]);
+    }, 2500);
+  }
 
   var titel = document.createElement('h1'); titel.id = 'lcTitel';
   var info = document.createElement('p'); info.id = 'lcInfo';
