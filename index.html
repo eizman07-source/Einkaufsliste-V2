@@ -3576,8 +3576,8 @@ footer {
   html[data-design="lcars"] .design-wahl { gap: 0.5rem; padding: 0; background: transparent; box-shadow: none; }
   html[data-design="lcars"] .design-wahl button { height: 44px; border-radius: 100vmax; background: transparent; color: var(--african-violet); box-shadow: inset 0 0 0 2px #6f6590; font-weight: 700; text-transform: uppercase; }
   html[data-design="lcars"] .design-wahl button[aria-pressed="true"] { background: var(--orange); color: #000000; box-shadow: none; }
-  html[data-design="lcars"] footer { padding-bottom: 1.5rem; }
-  html[data-design="lcars"] footer a { color: var(--african-violet); }
+  html[data-design="lcars"] #lcFuss { margin-top: 2.5rem; padding: 0 0 1.5rem; font-size: 0.55rem; line-height: 1.4; color: #5e5680; letter-spacing: 0.02em; }
+  html[data-design="lcars"] #lcFuss a { color: #5e5680; text-decoration-thickness: 1px; text-underline-offset: 0.15rem; }
 
   /* Design-Auswahl (beide Designs) */
   .design-wahl { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--hh-glass-fill-strong); box-shadow: inset 0 0 0 1px var(--hh-line-strong); margin-top: 10px; }
@@ -3773,13 +3773,16 @@ footer {
   if (r.getAttribute('data-design') !== 'lcars') return;
   var main = document.querySelector('main');
   var rechts = document.getElementById('lcRechts');
-  rechts.insertBefore(main, document.getElementById('lcFuss'));
+  var fuss = document.getElementById('lcFuss');
+  rechts.insertBefore(main, fuss);
+  // Pflicht-Hinweis der Vorlage: klein und gedämpft ganz unten in den Einstellungen
+  document.getElementById('panel-einstellungen').appendChild(fuss);
   var nav = document.getElementById('lcNav');
   nav.insertBefore(document.getElementById('storeSwitch'), nav.firstChild);
 
   // Datenkaskade: Zufallszahlen in 9 Zeilen je Spalte (Zeilenklassen wie in der
   // Vorlage, deren Farbanimation das Flimmern erzeugt); alle paar Sekunden wird
-  // eine Spalte neu gewürfelt.
+  // eine Spalte neu gewürfelt (alle 5 Sekunden).
   var kaskade = document.querySelector('.lc-vorlage .data-cascade-wrapper');
   var ZEILEN = ['dc-row-1', 'dc-row-1', 'dc-row-2', 'dc-row-3', 'dc-row-3', 'dc-row-4', 'dc-row-5', 'dc-row-6', 'dc-row-7'];
   function zahl() {
@@ -3798,7 +3801,7 @@ footer {
       if (document.hidden) return;
       var alle = kaskade.children, i = Math.floor(Math.random() * alle.length);
       kaskade.replaceChild(spalte(), alle[i]);
-    }, 2500);
+    }, 5000);
   }
 
   var titel = document.createElement('h1'); titel.id = 'lcTitel';
